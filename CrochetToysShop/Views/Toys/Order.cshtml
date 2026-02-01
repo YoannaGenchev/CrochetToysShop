@@ -1,0 +1,43 @@
+﻿@model CrochetToysShop.Models.ViewModels.Orders.OrderCreateViewModel
+
+@{
+    ViewData["Title"] = "Поръчка";
+}
+
+<div asp-validation-summary="All" class="text-danger mb-3"></div>
+
+<h2 class="mb-4">Поръчка за: @Model.ToyName</h2>
+
+@if (TempData["Message"] != null)
+{
+    <div class="alert alert-success">@TempData["Message"]</div>
+}
+
+<form asp-action="Order" method="post">
+    <input type="hidden" asp-for="ToyId" />
+
+    <div class="mb-3">
+        <label asp-for="CustomerName" class="form-label"></label>
+        <input asp-for="CustomerName" class="form-control" />
+        <span asp-validation-for="CustomerName" class="text-danger"></span>
+    </div>
+
+    <div class="mb-3">
+        <label asp-for="PhoneNumber" class="form-label"></label>
+        <input asp-for="PhoneNumber" class="form-control" />
+        <span asp-validation-for="PhoneNumber" class="text-danger"></span>
+    </div>
+
+    <div class="mb-3">
+        <label asp-for="Address" class="form-label"></label>
+        <textarea asp-for="Address" class="form-control" rows="3"></textarea>
+        <span asp-validation-for="Address" class="text-danger"></span>
+    </div>
+
+    <button type="submit" class="btn btn-success">Изпрати</button>
+    <a asp-action="Details" asp-route-id="@Model.ToyId" class="btn btn-secondary">Отказ</a>
+</form>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

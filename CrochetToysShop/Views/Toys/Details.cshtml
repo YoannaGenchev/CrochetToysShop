@@ -1,0 +1,58 @@
+﻿@using CrochetToysShop.Extensions
+@model CrochetToysShop.Models.ViewModels.Toys.ToyDetailsViewModel
+
+@{
+    ViewData["Title"] = "Детайли";
+}
+
+@if (TempData["Message"] != null)
+{
+    <div class="alert alert-success">@TempData["Message"]</div>
+}
+
+<h2 class="mb-4">@Model.Name</h2>
+
+<div class="row">
+    <div class="col-md-6">
+        @if (!string.IsNullOrWhiteSpace(Model.ImageUrl))
+        {
+            <img src="@Model.ImageUrl" alt="@Model.Name" class="img-fluid rounded border" />
+        }
+        else
+        {
+            <div class="alert alert-secondary">Няма снимка.</div>
+        }
+    </div>
+
+    <div class="col-md-6">
+        <p>
+            <span class="badge bg-secondary">@Model.CategoryName</span>
+        </p>
+
+        <p class="fs-4 fw-bold">@Model.Price.ToEuro()</p>
+
+        <p><strong>Размер:</strong> @Model.SizeCm см</p>
+        <p><strong>Трудност:</strong> @Model.Difficulty</p>
+        <p>
+            <strong>Наличност:</strong>
+            @(Model.IsAvailable ? "В наличност" : "Изчерпано")
+        </p>
+
+        <hr />
+
+        <p>@Model.Description</p>
+
+        <div class="mt-4 d-flex gap-2">
+            <a asp-action="Index" class="btn btn-secondary">Назад</a>
+            @if (Model.IsAvailable)
+            {
+                <a asp-action="Order" asp-route-id="@Model.Id" class="btn btn-success">Поръчай</a>
+            }
+            @if (User.IsInRole("Admin"))
+            {
+                <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-warning">Промени</a>
+                <a asp-action="Delete" asp-route-id="@Model.Id" class="btn btn-danger">Изтрий</a>
+            }
+        </div>
+    </div>
+</div>

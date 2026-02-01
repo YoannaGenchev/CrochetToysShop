@@ -1,0 +1,17 @@
+﻿@model CrochetToysShop.Models.ViewModels.Toys.ToyDeleteViewModel
+
+@{
+    ViewData["Title"] = "Изтриване";
+}
+
+<h2 class="mb-4">Изтриване</h2>
+
+<div class="alert alert-warning">
+    Сигурна ли си, че искаш да изтриеш <strong>@Model.Name</strong>?
+</div>
+
+<form asp-action="DeleteConfirmed" method="post">
+    <input type="hidden" name="id" value="@Model.Id" />
+    <button type="submit" class="btn btn-danger">Да, изтрий</button>
+    <a asp-action="Details" asp-route-id="@Model.Id" class="btn btn-secondary">Отказ</a>
+</form>

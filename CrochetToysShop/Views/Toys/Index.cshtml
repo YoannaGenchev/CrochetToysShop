@@ -1,0 +1,60 @@
+﻿@using CrochetToysShop.Extensions
+
+@model IEnumerable<CrochetToysShop.Models.ViewModels.Toys.ToyListItemViewModel>
+
+@{
+    ViewData["Title"] = "Играчки";
+}
+
+<h2 class="mb-4">@ViewData["Title"]</h2>
+
+@if (User.IsInRole("Admin"))
+{
+    <a asp-action="Create" class="btn btn-primary mb-3">+ Добави играчка</a>
+}
+
+@if (!Model.Any())
+{
+    <div class="alert alert-info">Все още няма добавени играчки.</div>
+}
+else
+{
+    <div class="row">
+        @foreach (var toy in Model)
+        {
+            <div class="col-md-4 mb-4">
+				<div class="card h-100">
+
+                        <img class="card-img-top" src="@toy.ImageUrl" alt="@toy.Name" />
+
+                    <div class="card-body">
+                        <h5 class="card-title">@toy.Name</h5>
+                        <p class="card-text">
+                            <span class="badge bg-secondary">@toy.CategoryName</span>
+                        </p>
+                        <span class="badge @(toy.IsAvailable ? "bg-success" : "bg-danger")">
+                            @(toy.IsAvailable ? "Налично" : "Изчерпано")
+                        </span>
+                        <p class="card-text fw-bold">
+                            @toy.Price.ToEuro()
+                        </p>
+                    </div>
+                    <div class="card-footer bg-white border-0">
+                        <a asp-controller="Toys" asp-action="Details" asp-route-id="@toy.Id"
+                           class="btn btn-outline-primary w-100">
+                            Детайли
+                        </a>
+                    
+                    @if (User.IsInRole("Admin"))
+                    {
+                        <div class="mt-2 d-flex gap-2">
+                            <a asp-action="Edit" asp-route-id="@toy.Id" class="btn btn-warning w-50">Редактирай</a>
+                            <a asp-action="Delete" asp-route-id="@toy.Id" class="btn btn-danger w-50">Изтрий</a>
+                        </div>
+                    }
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+}
