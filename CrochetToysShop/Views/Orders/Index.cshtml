@@ -1,0 +1,56 @@
+﻿@model IEnumerable<CrochetToysShop.Models.ViewModels.Orders.OrderAdminListItemViewModel>
+
+@{
+    ViewData["Title"] = "Поръчки";
+}
+
+<h2 class="mb-4">Поръчки</h2>
+
+@if (!Model.Any())
+{
+    <div class="alert alert-info">Няма поръчки.</div>
+}
+else
+{
+    <table class="table table-striped align-middle">
+        <thead>
+            <tr>
+                <th>#</th>
+                <th>Дата</th>
+                <th>Статус</th>
+                <th>Продукт</th>
+                <th>Клиент</th>
+                <th>Телефон</th>
+                <th>Адрес</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var o in Model)
+            {
+                <tr>
+                    <td>@o.Id</td>
+                    <td>@o.CreatedOn.ToLocalTime().ToString("dd.MM.yyyy HH:mm")</td>
+                    <td>@o.Status</td>
+                    <td>
+                        <a asp-controller="Toys" asp-action="Details" asp-route-id="@o.ToyId">
+                            @o.ToyName
+                        </a>
+                    </td>
+                    <td>@o.CustomerName</td>
+                    <td>@o.PhoneNumber</td>
+                    <td>@o.Address</td>
+                    <td class="text-end">
+                        @if (o.Status != "Completed")
+                        {
+                            <form asp-action="MarkCompleted" method="post" class="d-inline">
+                                <input type="hidden" name="id" value="@o.Id" />
+                                <button class="btn btn-sm btn-success">Финализирай</button>
+                            </form>
+                        }
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
