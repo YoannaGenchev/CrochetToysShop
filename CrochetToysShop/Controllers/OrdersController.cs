@@ -1,53 +1,37 @@
-﻿using CrochetToysShop.Data;
-using CrochetToysShop.Models.ViewModels.Orders;
+﻿using CrochetToysShop.Services.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 
 namespace CrochetToysShop.Controllers
 {
     [Authorize(Roles = "Admin")]
     public class OrdersController : Controller
     {
-        private readonly ApplicationDbContext db;
+        private readonly IOrderService orderService;
 
-        public OrdersController(ApplicationDbContext db)
+        public OrdersController(IOrderService orderService)
         {
-            this.db = db;
+            this.orderService = orderService;
         }
 
         public async Task<IActionResult> Index()
         {
-            var orders = await db.Orders
-                .AsNoTracking()
-                .Include(o => o.Toy)
-                .OrderByDescending(o => o.CreatedOn)
-                .Select(o => new OrderAdminListItemViewModel
-                {
-                    Id = o.Id,
-                    CreatedOn = o.CreatedOn,
-                    Status = o.Status,
-                    CustomerName = o.CustomerName,
-                    PhoneNumber = o.PhoneNumber,
-                    Address = o.Address,
-                    ToyId = o.ToyId,
-                    ToyName = o.Toy.Name
-                })
-                .ToListAsync();
-
+            var orders = await orderService.GetAllForAdminAsync();
             return View(orders);
         }
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public IActionResult MarkCompleted(int id)
+        [Route("Orders/MarkCompleted/{id:int}")]
+        public async Task<IActionResult> MarkCompleted(int id)
         {
-            var order = db.Orders.Find(id);
-            if (order == null) return NotFound();
+            var ok = await orderService.MarkCompletedAsync(id);
+            if (!ok)
+            {
+                return NotFound();
+            }
 
-            order.Status = "Completed";
-            db.SaveChanges();
-
+            TempData["SuccessMessage"] = "Поръчката е маркирана като изпълнена.";
             return RedirectToAction(nameof(Index));
         }
     }
