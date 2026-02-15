@@ -21,6 +21,8 @@ namespace CrochetToysShop
                 options.UseSqlServer(connectionString));
             builder.Services.AddDatabaseDeveloperPageExceptionFilter();
 
+            builder.Services.AddScoped<IOrderService, OrderService>();
+
             builder.Services.AddDefaultIdentity<IdentityUser>(options =>
             {
                 options.SignIn.RequireConfirmedAccount = false;
@@ -110,7 +112,6 @@ namespace CrochetToysShop
             else
             {
                 app.UseExceptionHandler("/Home/Error");
-                // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
                 app.UseHsts();
             }
 

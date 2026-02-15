@@ -1,23 +1,21 @@
-﻿using CrochetToysShop.Data;
-using CrochetToysShop.Services.Interfaces;
-using CrochetToysShop.Models.Entities;
-using CrochetToysShop.Models.ViewModels.Orders;
+﻿using CrochetToysShop.Models.ViewModels.Orders;
 using CrochetToysShop.Models.ViewModels.Toys;
+using CrochetToysShop.Services.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 
 namespace CrochetToysShop.Controllers
 {
     public class ToysController : Controller
     {
         private readonly IToyService toyService;
+        private readonly IOrderService orderService;
 
-        public ToysController(IToyService toyService)
+        public ToysController(IToyService toyService, IOrderService orderService)
         {
             this.toyService = toyService;
+            this.orderService = orderService;
         }
-
 
         public async Task<IActionResult> Index()
         {
@@ -25,59 +23,25 @@ namespace CrochetToysShop.Controllers
             return View(toys);
         }
 
-
         [Authorize(Roles = "Admin")]
-        public IActionResult Create()
+        public async Task<IActionResult> Create()
         {
-            var model = new ToyFormViewModel
-            {
-                Categories = db.Categories
-                    .OrderBy(c => c.Name)
-                    .Select(c => new CategoryDropdownViewModel
-                    {
-                        Id = c.Id,
-                        Name = c.Name
-                    })
-                    .ToList()
-            };
-
+            var model = await toyService.GetCreateModelAsync();
             return View(model);
         }
 
         [HttpPost]
         [Authorize(Roles = "Admin")]
         [ValidateAntiForgeryToken]
-        public IActionResult Create(ToyFormViewModel model)
-
+        public async Task<IActionResult> Create(ToyFormViewModel model)
         {
             if (!ModelState.IsValid)
             {
-                model.Categories = db.Categories
-                    .OrderBy(c => c.Name)
-                    .Select(c => new CategoryDropdownViewModel
-                    {
-                        Id = c.Id,
-                        Name = c.Name
-                    })
-                    .ToList();
-
+                model = await toyService.GetCreateModelAsync();
                 return View(model);
             }
 
-            var toy = new Toy
-            {
-                Name = model.Name,
-                Description = model.Description,
-                Price = model.Price,
-                ImageUrl = model.ImageUrl,
-                SizeCm = model.SizeCm,
-                Difficulty = model.Difficulty,
-                IsAvailable = model.IsAvailable,
-                CategoryId = model.CategoryId
-            };
-
-            db.Toys.Add(toy);
-            db.SaveChanges();
+            await toyService.CreateAsync(model);
 
             TempData["SuccessMessage"] = "Играчката е добавена успешно.";
             return RedirectToAction(nameof(Index));
@@ -100,33 +64,13 @@ namespace CrochetToysShop.Controllers
         [HttpGet]
         [Authorize(Roles = "Admin")]
         [Route("Toys/Edit/{id:int}")]
-        public IActionResult Edit(int id)
+        public async Task<IActionResult> Edit(int id)
         {
-            var toy = db.Toys.Find(id);
-            if (toy == null)
+            var model = await toyService.GetEditModelAsync(id);
+            if (model == null)
             {
                 return NotFound();
             }
-
-            var model = new ToyFormViewModel
-            {
-                Name = toy.Name,
-                Description = toy.Description,
-                Price = toy.Price,
-                ImageUrl = toy.ImageUrl,
-                SizeCm = toy.SizeCm,
-                Difficulty = toy.Difficulty,
-                IsAvailable = toy.IsAvailable,
-                CategoryId = toy.CategoryId,
-                Categories = db.Categories
-                    .OrderBy(c => c.Name)
-                    .Select(c => new CategoryDropdownViewModel
-                    {
-                        Id = c.Id,
-                        Name = c.Name
-                    })
-                    .ToList()
-            };
 
             return View(model);
         }
@@ -135,80 +79,55 @@ namespace CrochetToysShop.Controllers
         [Authorize(Roles = "Admin")]
         [ValidateAntiForgeryToken]
         [Route("Toys/Edit/{id:int}")]
-        public IActionResult Edit(int id, ToyFormViewModel model)
+        public async Task<IActionResult> Edit(int id, ToyFormViewModel model)
         {
-            var toy = db.Toys.Find(id);
-            if (toy == null)
+            if (!ModelState.IsValid)
+            {
+                var formModel = await toyService.GetEditModelAsync(id);
+                if (formModel == null)
+                {
+                    return NotFound();
+                }
+
+                model.Categories = formModel.Categories;
+                return View(model);
+            }
+
+            var ok = await toyService.EditAsync(id, model);
+            if (!ok)
             {
                 return NotFound();
             }
 
-            if (!ModelState.IsValid)
-            {
-                model.Categories = db.Categories
-                    .OrderBy(c => c.Name)
-                    .Select(c => new CategoryDropdownViewModel
-                    {
-                        Id = c.Id,
-                        Name = c.Name
-                    })
-                    .ToList();
-
-                return View(model);
-            }
-
-            toy.Name = model.Name;
-            toy.Description = model.Description;
-            toy.Price = model.Price;
-            toy.ImageUrl = model.ImageUrl;
-            toy.SizeCm = model.SizeCm;
-            toy.Difficulty = model.Difficulty;
-            toy.IsAvailable = model.IsAvailable;
-            toy.CategoryId = model.CategoryId;
-
-            db.SaveChanges();
-
             TempData["SuccessMessage"] = "Промените са запазени успешно.";
-            return RedirectToAction(nameof(Details), new { id = toy.Id });
+            return RedirectToAction(nameof(Details), new { id });
         }
 
         [HttpGet]
         [Authorize(Roles = "Admin")]
         [Route("Toys/Delete/{id:int}")]
-        public IActionResult Delete(int id)
+        public async Task<IActionResult> Delete(int id)
         {
-            var toy = db.Toys
-                .AsNoTracking()
-                .Where(t => t.Id == id)
-                .Select(t => new ToyDeleteViewModel
-                {
-                    Id = t.Id,
-                    Name = t.Name
-                })
-                .FirstOrDefault();
-
-            if (toy == null)
+            var model = await toyService.GetDeleteModelAsync(id);
+            if (model == null)
             {
                 return NotFound();
             }
 
-            return View(toy);
+            return View(model);
         }
 
         [HttpPost]
         [Authorize(Roles = "Admin")]
         [ValidateAntiForgeryToken]
         [Route("Toys/Delete/{id:int}")]
-        public IActionResult DeleteConfirmed(int id)
+        public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var toy = db.Toys.Find(id);
-            if (toy == null)
+            var ok = await toyService.DeleteAsync(id);
+            if (!ok)
             {
                 return NotFound();
             }
-
-            db.Toys.Remove(toy);
-            db.SaveChanges();
 
             TempData["SuccessMessage"] = "Играчката е изтрита успешно.";
             return RedirectToAction(nameof(Index));
@@ -216,57 +135,41 @@ namespace CrochetToysShop.Controllers
 
         [HttpGet]
         [Route("Toys/Order/{id:int}")]
-        public IActionResult Order(int id)
+        public async Task<IActionResult> Order(int id)
         {
-            var toy = db.Toys
-                .AsNoTracking()
-                .Where(t => t.Id == id)
-                .Select(t => new { t.Id, t.Name, t.IsAvailable })
-                .FirstOrDefault();
+            var model = await orderService.GetOrderModelAsync(id);
 
-            if (toy == null) return NotFound();
-            if (!toy.IsAvailable) return RedirectToAction(nameof(Details), new { id });
-
-            return View(new OrderCreateViewModel
+            if (model == null)
             {
-                ToyId = toy.Id,
-                ToyName = toy.Name
-            });
+                return RedirectToAction(nameof(Details), new { id });
+            }
+
+            return View(model);
         }
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public IActionResult Order(OrderCreateViewModel model)
-             {
-            var toy = db.Toys.Find(model.ToyId);
-            if (toy == null) return NotFound();
-
-            if (!toy.IsAvailable)
-            {
-                ModelState.AddModelError(string.Empty, "Тази играчка вече е изчерпана.");
-            }
-
+        public async Task<IActionResult> Order(OrderCreateViewModel model)
+        {
             if (!ModelState.IsValid)
             {
-                model.ToyName = toy.Name;
+                var orderModel = await orderService.GetOrderModelAsync(model.ToyId);
+                model.ToyName = orderModel?.ToyName ?? model.ToyName;
                 return View(model);
             }
 
-            db.Orders.Add(new Order
-            {
-                CustomerName = model.CustomerName,
-                PhoneNumber = model.PhoneNumber,
-                Address = model.Address,
-                ToyId = toy.Id,
-                Status = "New"
-            });
+            var (ok, error, toyId) = await orderService.CreateOrderAsync(model);
 
-            toy.IsAvailable = false;
-            db.SaveChanges();
+            if (!ok)
+            {
+                ModelState.AddModelError(string.Empty, error!);
+                var orderModel = await orderService.GetOrderModelAsync(model.ToyId);
+                model.ToyName = orderModel?.ToyName ?? model.ToyName;
+                return View(model);
+            }
 
             TempData["SuccessMessage"] = "Поръчката е изпратена успешно!";
-            return RedirectToAction(nameof(Details), new { id = toy.Id });
+            return RedirectToAction(nameof(Details), new { id = toyId });
         }
-
     }
 }
