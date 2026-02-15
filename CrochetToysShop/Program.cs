@@ -1,8 +1,9 @@
 ﻿using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 using CrochetToysShop.Data;
 using CrochetToysShop.Models.Entities;
-using Microsoft.AspNetCore.Identity;
-using Microsoft.EntityFrameworkCore;
+using CrochetToysShop.Services.Interfaces;
+using CrochetToysShop.Services.Implementations;
 
 
 
@@ -35,6 +36,9 @@ namespace CrochetToysShop
             .AddEntityFrameworkStores<ApplicationDbContext>();
 
             builder.Services.AddControllersWithViews();
+
+            builder.Services.AddScoped<IToyService, ToyService>();
+
 
             var app = builder.Build();
 

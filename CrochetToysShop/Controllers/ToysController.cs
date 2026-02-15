@@ -1,4 +1,5 @@
 ﻿using CrochetToysShop.Data;
+using CrochetToysShop.Services.Interfaces;
 using CrochetToysShop.Models.Entities;
 using CrochetToysShop.Models.ViewModels.Orders;
 using CrochetToysShop.Models.ViewModels.Toys;
@@ -10,31 +11,20 @@ namespace CrochetToysShop.Controllers
 {
     public class ToysController : Controller
     {
-        private readonly ApplicationDbContext db;
-        public ToysController(ApplicationDbContext db)
+        private readonly IToyService toyService;
+
+        public ToysController(IToyService toyService)
         {
-            this.db = db;
+            this.toyService = toyService;
         }
+
 
         public async Task<IActionResult> Index()
         {
-            var toys = await db.Toys
-                .AsNoTracking()
-                .Include(t => t.Category)
-                .OrderBy(t => t.Name)
-                .Select(t => new ToyListItemViewModel
-                {
-                    Id = t.Id,
-                    Name = t.Name,
-                    Price = t.Price,
-                    ImageUrl = t.ImageUrl,
-                    CategoryName = t.Category.Name,
-                    IsAvailable = t.IsAvailable
-                })
-                .ToListAsync();
-
+            var toys = await toyService.GetAllAsync();
             return View(toys);
         }
+
 
         [Authorize(Roles = "Admin")]
         public IActionResult Create()
@@ -89,27 +79,15 @@ namespace CrochetToysShop.Controllers
             db.Toys.Add(toy);
             db.SaveChanges();
 
+            TempData["SuccessMessage"] = "Играчката е добавена успешно.";
             return RedirectToAction(nameof(Index));
         }
+
+        [HttpGet]
+        [Route("Toys/Details/{id:int}")]
         public async Task<IActionResult> Details(int id)
         {
-            var toy = await db.Toys
-                .AsNoTracking()
-                .Include(t => t.Category)
-                .Where(t => t.Id == id)
-                .Select(t => new ToyDetailsViewModel
-                {
-                    Id = t.Id,
-                    Name = t.Name,
-                    Description = t.Description,
-                    Price = t.Price,
-                    ImageUrl = t.ImageUrl,
-                    SizeCm = t.SizeCm,
-                    Difficulty = t.Difficulty,
-                    IsAvailable = t.IsAvailable,
-                    CategoryName = t.Category.Name
-                })
-                .FirstOrDefaultAsync();
+            var toy = await toyService.GetDetailsAsync(id);
 
             if (toy == null)
             {
@@ -119,7 +97,9 @@ namespace CrochetToysShop.Controllers
             return View(toy);
         }
 
+        [HttpGet]
         [Authorize(Roles = "Admin")]
+        [Route("Toys/Edit/{id:int}")]
         public IActionResult Edit(int id)
         {
             var toy = db.Toys.Find(id);
@@ -154,6 +134,7 @@ namespace CrochetToysShop.Controllers
         [HttpPost]
         [Authorize(Roles = "Admin")]
         [ValidateAntiForgeryToken]
+        [Route("Toys/Edit/{id:int}")]
         public IActionResult Edit(int id, ToyFormViewModel model)
         {
             var toy = db.Toys.Find(id);
@@ -187,10 +168,13 @@ namespace CrochetToysShop.Controllers
 
             db.SaveChanges();
 
+            TempData["SuccessMessage"] = "Промените са запазени успешно.";
             return RedirectToAction(nameof(Details), new { id = toy.Id });
         }
 
+        [HttpGet]
         [Authorize(Roles = "Admin")]
+        [Route("Toys/Delete/{id:int}")]
         public IActionResult Delete(int id)
         {
             var toy = db.Toys
@@ -214,6 +198,7 @@ namespace CrochetToysShop.Controllers
         [HttpPost]
         [Authorize(Roles = "Admin")]
         [ValidateAntiForgeryToken]
+        [Route("Toys/Delete/{id:int}")]
         public IActionResult DeleteConfirmed(int id)
         {
             var toy = db.Toys.Find(id);
@@ -225,8 +210,12 @@ namespace CrochetToysShop.Controllers
             db.Toys.Remove(toy);
             db.SaveChanges();
 
+            TempData["SuccessMessage"] = "Играчката е изтрита успешно.";
             return RedirectToAction(nameof(Index));
         }
+
+        [HttpGet]
+        [Route("Toys/Order/{id:int}")]
         public IActionResult Order(int id)
         {
             var toy = db.Toys
@@ -248,7 +237,7 @@ namespace CrochetToysShop.Controllers
         [HttpPost]
         [ValidateAntiForgeryToken]
         public IActionResult Order(OrderCreateViewModel model)
-        {
+             {
             var toy = db.Toys.Find(model.ToyId);
             if (toy == null) return NotFound();
 
@@ -275,7 +264,7 @@ namespace CrochetToysShop.Controllers
             toy.IsAvailable = false;
             db.SaveChanges();
 
-            TempData["Message"] = "Поръчката е изпратена успешно!";
+            TempData["SuccessMessage"] = "Поръчката е изпратена успешно!";
             return RedirectToAction(nameof(Details), new { id = toy.Id });
         }
 
