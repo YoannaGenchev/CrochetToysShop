@@ -25,7 +25,18 @@ else
             <div class="col-md-4 mb-4">
 				<div class="card h-100">
 
-                        <img class="card-img-top" src="@toy.ImageUrl" alt="@toy.Name" />
+                    @if (!string.IsNullOrWhiteSpace(toy.ImageUrl))
+                    {
+                        <img class="card-img-top toy-card-img"
+                             src="@toy.ImageUrl"
+                             asp-append-version="true"
+                             alt="@toy.Name" />
+
+                    }
+                    else
+                    {
+                        <div class="toy-card-img-placeholder">🧸</div>
+                    }
 
                     <div class="card-body">
                         <h5 class="card-title">@toy.Name</h5>

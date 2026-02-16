@@ -1,8 +1,37 @@
 ﻿@{
-    ViewData["Title"] = "Home Page";
+    ViewData["Title"] = "Начало";
+    ViewData["BodyClass"] = "home-page";
 }
+<section class="hero-section">
+    <h1>Ръчно плетени играчки</h1>
+    <p class="lead mt-2">Всяка играчка е направена с любов и внимание към детайла.</p>
+    <a asp-controller="Toys" asp-action="Index" class="btn btn-hero mt-4">
+        Разгледай играчките
+    </a>
+</section>
 
-<div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://learn.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
-</div>
+<section class="features-section">
+    <div class="row text-center">
+        <div class="col-md-4">
+            <div class="feature-box">
+                <div class="feature-icon">🎨</div>
+                <h5>Уникален дизайн</h5>
+                <p>Всяка играчка е различна и неповторима.</p>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="feature-box">
+                <div class="feature-icon">🌿</div>
+                <h5>Висококачествени материали</h5>
+                <p>Използваме само хипоалергенни прежди.</p>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="feature-box">
+                <div class="feature-icon">📦</div>
+                <h5>Бърза доставка</h5>
+                <p>Изпращаме в рамките на 5 работни дни.</p>
+            </div>
+        </div>
+    </div>
+</section>

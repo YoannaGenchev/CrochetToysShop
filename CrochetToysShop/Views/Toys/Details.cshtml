@@ -12,11 +12,16 @@
 
 <h2 class="mb-4">@Model.Name</h2>
 
-<div class="row">
+<div class="row g-4 mb-5">
     <div class="col-md-6">
         @if (!string.IsNullOrWhiteSpace(Model.ImageUrl))
         {
-            <img src="@Model.ImageUrl" alt="@Model.Name" class="img-fluid rounded border" />
+            <img src="@Model.ImageUrl"
+                 asp-append-version="true"
+                 alt="@Model.Name"
+                 class="img-fluid rounded border"
+                 style="width: 100%; object-fit: contain; background-color: #f8f9fa;" />
+
         }
         else
         {
@@ -25,24 +30,39 @@
     </div>
 
     <div class="col-md-6">
-        <p>
-            <span class="badge bg-secondary">@Model.CategoryName</span>
-        </p>
+        <dl class="row mt-2">
+            <dt class="col-sm-4">Категория</dt>
+            <dd class="col-sm-8">
+                <span class="badge bg-secondary">@Model.CategoryName</span>
+            </dd>
 
-        <p class="fs-4 fw-bold">@Model.Price.ToEuro()</p>
+            <dt class="col-sm-4">Цена</dt>
+            <dd class="col-sm-8 fw-bold fs-5">@Model.Price.ToEuro()</dd>
 
-        <p><strong>Размер:</strong> @Model.SizeCm см</p>
-        <p><strong>Трудност:</strong> @Model.Difficulty</p>
-        <p>
-            <strong>Наличност:</strong>
-            @(Model.IsAvailable ? "В наличност" : "Изчерпано")
-        </p>
+            <dt class="col-sm-4">Размер</dt>
+            <dd class="col-sm-8">@Model.SizeCm см</dd>
+
+            <dt class="col-sm-4">Трудност</dt>
+            <dd class="col-sm-8">@Model.Difficulty</dd>
+
+            <dt class="col-sm-4">Наличност</dt>
+            <dd class="col-sm-8">
+                @if (Model.IsAvailable)
+                {
+                    <span class="badge bg-success">В наличност</span>
+                }
+                else
+                {
+                    <span class="badge bg-danger">Изчерпано</span>
+                }
+            </dd>
+        </dl>
 
         <hr />
 
-        <p>@Model.Description</p>
+        <p class="text-muted">@Model.Description</p>
 
-        <div class="mt-4 d-flex gap-2">
+        <div class="mt-4 d-flex flex-wrap gap-2">
             <a asp-action="Index" class="btn btn-secondary">Назад</a>
             @if (Model.IsAvailable)
             {

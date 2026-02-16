@@ -10,8 +10,9 @@
     Сигурна ли си, че искаш да изтриеш <strong>@Model.Name</strong>?
 </div>
 
-<form asp-action="DeleteConfirmed" method="post">
-    <input type="hidden" name="id" value="@Model.Id" />
+<form asp-action="Delete" asp-route-id="@Model.Id" method="post">
+    @Html.AntiForgeryToken()
     <button type="submit" class="btn btn-danger">Да, изтрий</button>
     <a asp-action="Details" asp-route-id="@Model.Id" class="btn btn-secondary">Отказ</a>
 </form>
+

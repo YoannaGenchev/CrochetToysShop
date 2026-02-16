@@ -31,7 +31,16 @@ else
                 <tr>
                     <td>@o.Id</td>
                     <td>@o.CreatedOn.ToLocalTime().ToString("dd.MM.yyyy HH:mm")</td>
-                    <td>@o.Status</td>
+                    <td>
+                        @if (o.Status == "Completed")
+                        {
+                            <span class="badge bg-success">Завършена</span>
+                        }
+                        else
+                        {
+                            <span class="badge bg-warning text-dark">Нова</span>
+                        }
+                    </td>
                     <td>
                         <a asp-controller="Toys" asp-action="Details" asp-route-id="@o.ToyId">
                             @o.ToyName
@@ -44,6 +53,7 @@ else
                         @if (o.Status != "Completed")
                         {
                             <form asp-action="MarkCompleted" method="post" class="d-inline">
+                                @Html.AntiForgeryToken()
                                 <input type="hidden" name="id" value="@o.Id" />
                                 <button class="btn btn-sm btn-success">Финализирай</button>
                             </form>
