@@ -21,15 +21,12 @@ namespace CrochetToysShop.Controllers
         }
 
         [HttpPost]
+        [Authorize(Roles = "Admin")]
         [ValidateAntiForgeryToken]
-        [Route("Orders/MarkCompleted/{id:int}")]
         public async Task<IActionResult> MarkCompleted(int id)
         {
             var ok = await orderService.MarkCompletedAsync(id);
-            if (!ok)
-            {
-                return NotFound();
-            }
+            if (!ok) return NotFound();
 
             TempData["SuccessMessage"] = "Поръчката е маркирана като изпълнена.";
             return RedirectToAction(nameof(Index));

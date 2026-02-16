@@ -121,13 +121,11 @@ namespace CrochetToysShop.Controllers
         [Authorize(Roles = "Admin")]
         [ValidateAntiForgeryToken]
         [Route("Toys/Delete/{id:int}")]
+        [ActionName("Delete")]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
             var ok = await toyService.DeleteAsync(id);
-            if (!ok)
-            {
-                return NotFound();
-            }
+            if (!ok) return NotFound();
 
             TempData["SuccessMessage"] = "Играчката е изтрита успешно.";
             return RedirectToAction(nameof(Index));
