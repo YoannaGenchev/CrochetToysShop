@@ -1,0 +1,77 @@
+@model CrochetToysShop.Web.ViewModels.Courses.CourseDetailsViewModel
+
+@{
+    ViewData["Title"] = @Model.Name;
+}
+
+<h2 class="mb-4">@Model.Name</h2>
+
+<div class="row g-4 mb-5">
+    <div class="col-md-6">
+        @if (!string.IsNullOrWhiteSpace(Model.ImageUrl))
+        {
+            <img src="@Model.ImageUrl" asp-append-version="true" alt="@Model.Name" class="img-fluid rounded border" style="width: 100%; object-fit: contain; background-color: #f8f9fa;" />
+        }
+        else
+        {
+            <img src="/images/toys/no-image.svg" asp-append-version="true" alt="@Model.Name" class="img-fluid rounded border" style="width: 100%; object-fit: contain; background-color: #f8f9fa;" />
+        }
+    </div>
+
+    <div class="col-md-6">
+        <dl class="row mt-2">
+            <dt class="col-sm-4">Price</dt>
+            <dd class="col-sm-8 fw-bold fs-5">@Model.Price.ToString("C")</dd>
+
+            <dt class="col-sm-4">Duration</dt>
+            <dd class="col-sm-8">@Model.DurationHours hours</dd>
+
+            <dt class="col-sm-4">Difficulty</dt>
+            <dd class="col-sm-8">@Model.Difficulty</dd>
+
+            <dt class="col-sm-4">Enrolled</dt>
+            <dd class="col-sm-8">@Model.EnrolledCount / @Model.MaxStudents</dd>
+
+            <dt class="col-sm-4">Status</dt>
+            <dd class="col-sm-8">
+                @if (Model.CanEnroll)
+                {
+                    <span class="badge bg-success">Available</span>
+                }
+                else
+                {
+                    <span class="badge bg-danger">Full</span>
+                }
+            </dd>
+        </dl>
+
+        <hr />
+
+        <p class="text-muted">@Model.Description</p>
+
+        <div class="mt-4 d-flex flex-wrap gap-2">
+            <a asp-action="Index" class="btn btn-secondary">Back to Courses</a>
+            @if (User.Identity?.IsAuthenticated == true)
+            {
+                @if (Model.IsUserEnrolled)
+                {
+                    <button type="button" class="btn btn-success" disabled>Already Enrolled</button>
+                }
+                else if (Model.CanEnroll)
+                {
+                    <form asp-action="Enroll" asp-route-id="@Model.Id" method="post" style="display: inline;">
+                        <button type="submit" class="btn btn-primary">Enroll Now</button>
+                    </form>
+                }
+                else
+                {
+                    <button type="button" class="btn btn-danger" disabled>Course Full</button>
+                }
+            }
+            else
+            {
+                <a asp-controller="Account" asp-action="Login" class="btn btn-warning">Login to Enroll</a>
+            }
+        </div>
+    </div>
+</div>

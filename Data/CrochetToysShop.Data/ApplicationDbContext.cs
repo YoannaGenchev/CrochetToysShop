@@ -18,5 +18,9 @@ namespace CrochetToysShop.Data
         public DbSet<OrderRequest> OrderRequests { get; set; } = null!;
 
         public DbSet<Order> Orders { get; set; } = null!;
+
+        public DbSet<Course> Courses { get; set; } = null!;
+
+        public DbSet<Enrollment> Enrollments { get; set; } = null!;
     }
 }

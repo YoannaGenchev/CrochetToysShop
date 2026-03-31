@@ -16,6 +16,7 @@ builder.Services.AddDatabaseDeveloperPageExceptionFilter();
 
 builder.Services.AddScoped<IToyService, ToyService>();
 builder.Services.AddScoped<IOrderService, OrderService>();
+builder.Services.AddScoped<ICourseService, CourseService>();
 
 builder.Services.AddDefaultIdentity<IdentityUser>(options =>
     {
@@ -102,6 +103,74 @@ static void SeedData(IServiceScope scope, ApplicationDbContext db)
     if (toAdd.Any())
     {
         db.Categories.AddRange(toAdd);
+        db.SaveChanges();
+    }
+
+    // Seed courses
+    var courseNames = new[] { "Beginner Amigurumi", "Advanced Amigurumi", "Crochet Blankets", "Baby Clothes Basics" };
+    var existingCourses = db.Courses.Select(c => c.Name).ToList();
+
+    var coursesToAdd = new List<Course>();
+    
+    if (!existingCourses.Contains("Beginner Amigurumi"))
+    {
+        coursesToAdd.Add(new Course
+        {
+            Name = "Beginner Amigurumi",
+            Description = "Learn the basics of creating adorable stuffed animals using crochet techniques. Perfect for beginners!",
+            Price = 29.99m,
+            DurationHours = 12,
+            Difficulty = "Beginner",
+            MaxStudents = 20,
+            IsActive = true
+        });
+    }
+
+    if (!existingCourses.Contains("Advanced Amigurumi"))
+    {
+        coursesToAdd.Add(new Course
+        {
+            Name = "Advanced Amigurumi",
+            Description = "Master complex amigurumi patterns and create sophisticated designs with shaping and details.",
+            Price = 49.99m,
+            DurationHours = 20,
+            Difficulty = "Advanced",
+            MaxStudents = 15,
+            IsActive = true
+        });
+    }
+
+    if (!existingCourses.Contains("Crochet Blankets"))
+    {
+        coursesToAdd.Add(new Course
+        {
+            Name = "Crochet Blankets",
+            Description = "Create beautiful cozy blankets with various patterns and techniques. Learn different stitches and patterns.",
+            Price = 39.99m,
+            DurationHours = 16,
+            Difficulty = "Intermediate",
+            MaxStudents = 18,
+            IsActive = true
+        });
+    }
+
+    if (!existingCourses.Contains("Baby Clothes Basics"))
+    {
+        coursesToAdd.Add(new Course
+        {
+            Name = "Baby Clothes Basics",
+            Description = "Learn to crochet adorable baby clothes including hats, booties, and sweaters.",
+            Price = 34.99m,
+            DurationHours = 14,
+            Difficulty = "Intermediate",
+            MaxStudents = 20,
+            IsActive = true
+        });
+    }
+
+    if (coursesToAdd.Any())
+    {
+        db.Courses.AddRange(coursesToAdd);
         db.SaveChanges();
     }
 }

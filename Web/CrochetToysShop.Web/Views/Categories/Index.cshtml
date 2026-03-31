@@ -1,0 +1,31 @@
+@model IEnumerable<CrochetToysShop.Web.ViewModels.Categories.CategoryListItemViewModel>
+
+@{
+    ViewData["Title"] = "Categories";
+}
+
+<h2 class="mb-4">@ViewData["Title"]</h2>
+
+@if (!Model.Any())
+{
+    <div class="alert alert-info">No categories found.</div>
+}
+else
+{
+    <div class="row">
+        @foreach (var category in Model)
+        {
+            <div class="col-md-4 mb-4">
+                <div class="card h-100">
+                    <div class="card-body">
+                        <h5 class="card-title">@category.Name</h5>
+                        <p class="card-text text-muted">@category.ToyCount toys available</p>
+                    </div>
+                    <div class="card-footer bg-white border-0">
+                        <a asp-route-categoryName="@category.Name" class="btn btn-outline-primary w-100">View Toys</a>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+}
