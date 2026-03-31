@@ -1,0 +1,64 @@
+@model IEnumerable<CrochetToysShop.Web.ViewModels.Orders.OrderAdminListItemViewModel>
+
+@{
+    ViewData["Title"] = "Orders";
+}
+
+<h2 class="mb-4">Orders</h2>
+
+@if (!Model.Any())
+{
+    <div class="alert alert-info">No orders yet.</div>
+}
+else
+{
+    <table class="table table-striped align-middle">
+        <thead>
+            <tr>
+                <th>#</th>
+                <th>Date</th>
+                <th>Status</th>
+                <th>Toy</th>
+                <th>Customer</th>
+                <th>Phone</th>
+                <th>Address</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var o in Model)
+            {
+                <tr>
+                    <td>@o.Id</td>
+                    <td>@o.CreatedOn.ToLocalTime().ToString("dd.MM.yyyy HH:mm")</td>
+                    <td>
+                        @if (o.Status == "Completed")
+                        {
+                            <span class="badge bg-success">Completed</span>
+                        }
+                        else
+                        {
+                            <span class="badge bg-warning text-dark">New</span>
+                        }
+                    </td>
+                    <td>
+                        <a asp-controller="Toys" asp-action="Details" asp-route-id="@o.ToyId">@o.ToyName</a>
+                    </td>
+                    <td>@o.CustomerName</td>
+                    <td>@o.PhoneNumber</td>
+                    <td>@o.Address</td>
+                    <td class="text-end">
+                        @if (o.Status != "Completed")
+                        {
+                            <form asp-action="MarkCompleted" method="post" class="d-inline">
+                                @Html.AntiForgeryToken()
+                                <input type="hidden" name="id" value="@o.Id" />
+                                <button class="btn btn-sm btn-success">Mark completed</button>
+                            </form>
+                        }
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
