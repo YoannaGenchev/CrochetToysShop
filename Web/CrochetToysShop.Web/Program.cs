@@ -60,7 +60,7 @@ using (var scope = app.Services.CreateScope())
 
 static void SeedData(IServiceScope scope, ApplicationDbContext db)
 {
-    var categoryNames = new[] { "Flowers", "Seasonal", "Bookmarks", "Animals", "Sweet Friends", "Accessories", "Easter" };
+    var categoryNames = new[] { "Flowers", "Seasonal", "Bookmarks", "Animals", "Sweet Friends", "Accessories", "Easter", "Martenica" };
 
     var roleManager = scope.ServiceProvider.GetRequiredService<RoleManager<IdentityRole>>();
     var userManager = scope.ServiceProvider.GetRequiredService<UserManager<IdentityUser>>();
