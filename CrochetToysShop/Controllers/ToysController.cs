@@ -1,6 +1,7 @@
-﻿using CrochetToysShop.Models.ViewModels.Orders;
+using CrochetToysShop.Models.ViewModels.Orders;
 using CrochetToysShop.Models.ViewModels.Toys;
 using CrochetToysShop.Services.Interfaces;
+using static CrochetToysShop.Common.Constants.ApplicationConstants;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -23,7 +24,7 @@ namespace CrochetToysShop.Controllers
             return View(toys);
         }
 
-        [Authorize(Roles = "Admin")]
+        [Authorize(Roles = Roles.Admin)]
         public async Task<IActionResult> Create()
         {
             var model = await toyService.GetCreateModelAsync();
@@ -31,7 +32,7 @@ namespace CrochetToysShop.Controllers
         }
 
         [HttpPost]
-        [Authorize(Roles = "Admin")]
+        [Authorize(Roles = Roles.Admin)]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(ToyFormViewModel model)
         {
@@ -43,7 +44,7 @@ namespace CrochetToysShop.Controllers
 
             await toyService.CreateAsync(model);
 
-            TempData["SuccessMessage"] = "Играчката е добавена успешно.";
+            TempData[TempDataKeys.SuccessMessage] = SuccessMessages.ToyCreated;
             return RedirectToAction(nameof(Index));
         }
 
@@ -62,7 +63,7 @@ namespace CrochetToysShop.Controllers
         }
 
         [HttpGet]
-        [Authorize(Roles = "Admin")]
+        [Authorize(Roles = Roles.Admin)]
         [Route("Toys/Edit/{id:int}")]
         public async Task<IActionResult> Edit(int id)
         {
@@ -76,7 +77,7 @@ namespace CrochetToysShop.Controllers
         }
 
         [HttpPost]
-        [Authorize(Roles = "Admin")]
+        [Authorize(Roles = Roles.Admin)]
         [ValidateAntiForgeryToken]
         [Route("Toys/Edit/{id:int}")]
         public async Task<IActionResult> Edit(int id, ToyFormViewModel model)
@@ -99,12 +100,12 @@ namespace CrochetToysShop.Controllers
                 return NotFound();
             }
 
-            TempData["SuccessMessage"] = "Промените са запазени успешно.";
+            TempData[TempDataKeys.SuccessMessage] = SuccessMessages.ToyEdited;
             return RedirectToAction(nameof(Details), new { id });
         }
 
         [HttpGet]
-        [Authorize(Roles = "Admin")]
+        [Authorize(Roles = Roles.Admin)]
         [Route("Toys/Delete/{id:int}")]
         public async Task<IActionResult> Delete(int id)
         {
@@ -118,7 +119,7 @@ namespace CrochetToysShop.Controllers
         }
 
         [HttpPost]
-        [Authorize(Roles = "Admin")]
+        [Authorize(Roles = Roles.Admin)]
         [ValidateAntiForgeryToken]
         [Route("Toys/Delete/{id:int}")]
         [ActionName("Delete")]
@@ -127,7 +128,7 @@ namespace CrochetToysShop.Controllers
             var ok = await toyService.DeleteAsync(id);
             if (!ok) return NotFound();
 
-            TempData["SuccessMessage"] = "Играчката е изтрита успешно.";
+            TempData[TempDataKeys.SuccessMessage] = SuccessMessages.ToyDeleted;
             return RedirectToAction(nameof(Index));
         }
 
@@ -166,7 +167,7 @@ namespace CrochetToysShop.Controllers
                 return View(model);
             }
 
-            TempData["SuccessMessage"] = "Поръчката е изпратена успешно!";
+            TempData[TempDataKeys.SuccessMessage] = SuccessMessages.OrderCreated;
             return RedirectToAction(nameof(Details), new { id = toyId });
         }
     }

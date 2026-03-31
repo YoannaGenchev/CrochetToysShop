@@ -1,4 +1,5 @@
-﻿using CrochetToysShop.Data;
+using CrochetToysShop.Data;
+using CrochetToysShop.Common.Constants;
 using CrochetToysShop.Models.Entities;
 using CrochetToysShop.Common;
 using CrochetToysShop.Models.ViewModels.Orders;
@@ -74,12 +75,12 @@ namespace CrochetToysShop.Services.Implementations
             var toy = await db.Toys.FindAsync(model.ToyId);
             if (toy == null)
             {
-                return (false, "Играчката не е намерена.", model.ToyId);
+                return (false, ApplicationConstants.ErrorMessages.ToyNotFound, model.ToyId);
             }
 
             if (!toy.IsAvailable)
             {
-                return (false, "Тази играчка вече е изчерпана.", toy.Id);
+                return (false, ApplicationConstants.ErrorMessages.ToyNotAvailable, toy.Id);
             }
 
             await db.Orders.AddAsync(new Order

@@ -1,5 +1,6 @@
-﻿using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using static CrochetToysShop.Common.Constants.ApplicationConstants;
 using CrochetToysShop.Data;
 using CrochetToysShop.Models.Entities;
 using CrochetToysShop.Services.Interfaces;
@@ -16,7 +17,7 @@ namespace CrochetToysShop
             var builder = WebApplication.CreateBuilder(args);
 
             // Add services to the container.
-            var connectionString = builder.Configuration.GetConnectionString("DefaultConnection") ?? throw new InvalidOperationException("Connection string 'DefaultConnection' not found.");
+            var connectionString = builder.Configuration.GetConnectionString("DefaultConnection") ?? throw new InvalidOperationException(ErrorMessages.MissingDefaultConnectionString);
             builder.Services.AddDbContext<ApplicationDbContext>(options =>
                 options.UseSqlServer(connectionString));
             builder.Services.AddDatabaseDeveloperPageExceptionFilter();
@@ -62,8 +63,8 @@ namespace CrochetToysShop
                 var roleManager = scope.ServiceProvider.GetRequiredService<RoleManager<IdentityRole>>();
                 var userManager = scope.ServiceProvider.GetRequiredService<UserManager<IdentityUser>>();
 
-                const string adminRole = "Admin";
-                const string adminEmail = "yoanna@admin.com";
+                const string adminRole = Roles.Admin;
+                const string adminEmail = AdminSeed.Email;
 
                 if (!roleManager.Roles.Any(r => r.Name == adminRole))
                 {
@@ -81,7 +82,7 @@ namespace CrochetToysShop
                         EmailConfirmed = true
                     };
 
-                    userManager.CreateAsync(adminUser, "admin1").GetAwaiter().GetResult();
+                    userManager.CreateAsync(adminUser, AdminSeed.Password).GetAwaiter().GetResult();
                 }
 
                 if (!userManager.IsInRoleAsync(adminUser, adminRole).GetAwaiter().GetResult())

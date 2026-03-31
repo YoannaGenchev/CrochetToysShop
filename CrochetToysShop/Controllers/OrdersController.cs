@@ -1,10 +1,11 @@
-﻿using CrochetToysShop.Services.Interfaces;
+using CrochetToysShop.Services.Interfaces;
+using static CrochetToysShop.Common.Constants.ApplicationConstants;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace CrochetToysShop.Controllers
 {
-    [Authorize(Roles = "Admin")]
+    [Authorize(Roles = Roles.Admin)]
     public class OrdersController : Controller
     {
         private readonly IOrderService orderService;
@@ -21,14 +22,14 @@ namespace CrochetToysShop.Controllers
         }
 
         [HttpPost]
-        [Authorize(Roles = "Admin")]
+        [Authorize(Roles = Roles.Admin)]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> MarkCompleted(int id)
         {
             var ok = await orderService.MarkCompletedAsync(id);
             if (!ok) return NotFound();
 
-            TempData["SuccessMessage"] = "Поръчката е маркирана като изпълнена.";
+            TempData[TempDataKeys.SuccessMessage] = SuccessMessages.OrderMarkedCompleted;
             return RedirectToAction(nameof(Index));
         }
     }
