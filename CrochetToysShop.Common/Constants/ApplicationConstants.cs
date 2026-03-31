@@ -33,5 +33,11 @@ namespace CrochetToysShop.Common.Constants
             public const string Email = "yoanna@admin.com";
             public const string Password = "admin1";
         }
+
+        public static class UILabels
+        {
+            public const string Available = "Available";
+            public const string OutOfStock = "Out of stock";
+        }
     }
 }

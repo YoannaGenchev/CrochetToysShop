@@ -32,13 +32,13 @@ else
                     <td>@o.Id</td>
                     <td>@o.CreatedOn.ToLocalTime().ToString("dd.MM.yyyy HH:mm")</td>
                     <td>
-                        @if (o.Status == "Completed")
+                        @if (o.Status == OrderStatus.Completed)
                         {
-                            <span class="badge bg-success">Completed</span>
+                            <span class="badge bg-success">@OrderStatus.Completed</span>
                         }
                         else
                         {
-                            <span class="badge bg-warning text-dark">New</span>
+                            <span class="badge bg-warning text-dark">@OrderStatus.New</span>
                         }
                     </td>
                     <td>
@@ -48,7 +48,7 @@ else
                     <td>@o.PhoneNumber</td>
                     <td>@o.Address</td>
                     <td class="text-end">
-                        @if (o.Status != "Completed")
+                        @if (o.Status != OrderStatus.Completed)
                         {
                             <form asp-action="MarkCompleted" method="post" class="d-inline">
                                 @Html.AntiForgeryToken()

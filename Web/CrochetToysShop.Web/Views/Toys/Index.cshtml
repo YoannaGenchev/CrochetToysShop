@@ -34,7 +34,7 @@ else
                     <div class="card-body">
                         <h5 class="card-title">@toy.Name</h5>
                         <p class="card-text"><span class="badge bg-secondary">@toy.CategoryName</span></p>
-                        <span class="badge @(toy.IsAvailable ? "bg-success" : "bg-danger")">@(toy.IsAvailable ? "Available" : "Out of stock")</span>
+                        <span class="badge @(toy.IsAvailable ? "bg-success" : "bg-danger")">@(toy.IsAvailable ? ApplicationConstants.UILabels.Available : ApplicationConstants.UILabels.OutOfStock)</span>
                         <p class="card-text fw-bold">@toy.Price.ToEuro()</p>
                     </div>
                     <div class="card-footer bg-white border-0">
