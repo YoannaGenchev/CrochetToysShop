@@ -1,4 +1,4 @@
-using CrochetToysShop.Data;
+﻿using CrochetToysShop.Data;
 using CrochetToysShop.Data.Models;
 using CrochetToysShop.Services.Core.Interfaces;
 using CrochetToysShop.Web.ViewModels.Toys;
@@ -15,11 +15,19 @@ namespace CrochetToysShop.Services.Core
             this.db = db;
         }
 
-        public async Task<IReadOnlyCollection<ToyListItemViewModel>> GetAllAsync()
+        public async Task<ToyIndexViewModel> GetAllAsync(int? categoryId = null)
         {
-            return await db.Toys
+            var query = db.Toys
                 .AsNoTracking()
                 .Include(t => t.Category)
+                .AsQueryable();
+
+            if (categoryId.HasValue && categoryId.Value > 0)
+            {
+                query = query.Where(t => t.CategoryId == categoryId.Value);
+            }
+
+            var toys = await query
                 .OrderBy(t => t.Name)
                 .Select(t => new ToyListItemViewModel
                 {
@@ -31,6 +39,22 @@ namespace CrochetToysShop.Services.Core
                     IsAvailable = t.IsAvailable,
                 })
                 .ToListAsync();
+
+            var categories = await db.Categories
+                .AsNoTracking()
+                .OrderBy(c => c.Name)
+                .Select(c => new CategoryDropdownViewModel {
+                    Id = c.Id,
+                    Name = c.Name
+                })
+                .ToListAsync();
+
+            return new ToyIndexViewModel
+            {
+                Toys = toys,
+                CategoryId = categoryId,
+                Categories = categories
+            };
         }
 
         public async Task<ToyDetailsViewModel?> GetDetailsAsync(int id)
@@ -160,3 +184,5 @@ namespace CrochetToysShop.Services.Core
         }
     }
 }
+
+

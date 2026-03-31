@@ -8,14 +8,7 @@
 
 <div class="row g-4 mb-5">
     <div class="col-md-6">
-        @if (!string.IsNullOrWhiteSpace(Model.ImageUrl))
-        {
-            <img src="@Model.ImageUrl" asp-append-version="true" alt="@Model.Name" class="img-fluid rounded border" style="width: 100%; object-fit: contain; background-color: #f8f9fa;" />
-        }
-        else
-        {
-            <div class="alert alert-secondary">No image.</div>
-        }
+        <img src="@(string.IsNullOrWhiteSpace(Model.ImageUrl) ? "/images/toys/no-image.svg" : Model.ImageUrl)" asp-append-version="true" alt="@Model.Name" class="img-fluid rounded border" style="width: 100%; object-fit: contain; background-color: #f8f9fa;" />
     </div>
 
     <div class="col-md-6">

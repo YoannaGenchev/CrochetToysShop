@@ -4,7 +4,7 @@ namespace CrochetToysShop.Services.Core.Interfaces
 {
     public interface IToyService
     {
-        Task<IReadOnlyCollection<ToyListItemViewModel>> GetAllAsync();
+        Task<ToyIndexViewModel> GetAllAsync(int? categoryId = null);
 
         Task<ToyDetailsViewModel?> GetDetailsAsync(int id);
 

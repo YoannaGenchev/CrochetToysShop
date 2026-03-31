@@ -18,13 +18,34 @@ namespace CrochetToysShop.Web.Controllers
             this.orderService = orderService;
         }
 
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index(int? categoryId)
         {
-            var toys = await toyService.GetAllAsync();
-            return View(toys);
+            var model = await toyService.GetAllAsync(categoryId);
+            return View(model);
         }
 
-        [Authorize(Roles = Roles.Admin)]
+        [HttpGet]
+        [Route("Toys/Category/{categoryName}")]
+        public async Task<IActionResult> Category(string categoryName)
+        {
+            var model = await toyService.GetAllAsync();
+            var filteredToys = model.Toys
+                .Where(t => t.CategoryName.Equals(categoryName, StringComparison.OrdinalIgnoreCase))
+                .ToList();
+
+            var categoryModel = new ToyIndexViewModel
+            {
+                Toys = filteredToys,
+                Categories = model.Categories
+            };
+
+            if (!categoryModel.Toys.Any())
+            {
+                ViewBag.CategoryName = categoryName;
+            }
+
+            return View("Index", categoryModel);
+        }
         public async Task<IActionResult> Create()
         {
             var model = await toyService.GetCreateModelAsync();
@@ -38,7 +59,8 @@ namespace CrochetToysShop.Web.Controllers
         {
             if (!ModelState.IsValid)
             {
-                model = await toyService.GetCreateModelAsync();
+                var categoriesModel = await toyService.GetCreateModelAsync();
+                model.Categories = categoriesModel.Categories;
                 return View(model);
             }
 

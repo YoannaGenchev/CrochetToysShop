@@ -1,4 +1,4 @@
-@model IEnumerable<CrochetToysShop.Web.ViewModels.Toys.ToyListItemViewModel>
+@model CrochetToysShop.Web.ViewModels.Toys.ToyIndexViewModel
 
 @{
     ViewData["Title"] = "Toys";
@@ -11,14 +11,31 @@
     <a asp-action="Create" class="btn btn-primary mb-3">+ Add toy</a>
 }
 
-@if (!Model.Any())
+<form method="get" asp-action="Index" class="mb-4">
+    <div class="row g-2">
+        <div class="col-md-4">
+            <select asp-for="CategoryId" class="form-select">
+                <option value="">All categories</option>
+                @foreach (var category in Model.Categories)
+                {
+                    <option value="@category.Id" selected="@(Model.CategoryId == category.Id)">@category.Name</option>
+                }
+            </select>
+        </div>
+        <div class="col-md-2">
+            <button type="submit" class="btn btn-primary w-100">Filter</button>
+        </div>
+    </div>
+</form>
+
+@if (!Model.Toys.Any())
 {
     <div class="alert alert-info">No toys yet.</div>
 }
 else
 {
     <div class="row">
-        @foreach (var toy in Model)
+        @foreach (var toy in Model.Toys)
         {
             <div class="col-md-4 mb-4">
                 <div class="card h-100">
@@ -28,7 +45,7 @@ else
                     }
                     else
                     {
-                        <div class="toy-card-img-placeholder">Toy</div>
+                        <img class="card-img-top toy-card-img" src="/images/toys/no-image.svg" asp-append-version="true" alt="@toy.Name" />
                     }
 
                     <div class="card-body">
