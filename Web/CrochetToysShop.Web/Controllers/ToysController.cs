@@ -26,6 +26,14 @@ namespace CrochetToysShop.Web.Controllers
         }
 
         [HttpGet]
+        public async Task<IActionResult> Search(string? q, int? categoryId, int page = 1)
+        {
+            var model = await toyService.SearchAsync(q, categoryId, page);
+            ViewBag.SearchQuery = q;
+            return View("Index", model);
+        }
+
+        [HttpGet]
         [Route("Toys/Category/{categoryName}")]
         public async Task<IActionResult> Category(string categoryName)
         {

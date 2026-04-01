@@ -73,6 +73,73 @@ namespace CrochetToysShop.Services.Core
             };
         }
 
+        public async Task<ToyIndexViewModel> SearchAsync(string? searchTerm = null, int? categoryId = null, int page = 1, int pageSize = 10)
+        {
+            var query = db.Toys
+                .AsNoTracking()
+                .Include(t => t.Category)
+                .AsQueryable();
+
+            // Filter by search term (name or description)
+            if (!string.IsNullOrWhiteSpace(searchTerm))
+            {
+                var lowerSearchTerm = searchTerm.ToLower();
+                query = query.Where(t => t.Name.ToLower().Contains(lowerSearchTerm) || 
+                                         t.Description.ToLower().Contains(lowerSearchTerm));
+            }
+
+            // Filter by category
+            if (categoryId.HasValue && categoryId.Value > 0)
+            {
+                query = query.Where(t => t.CategoryId == categoryId.Value);
+            }
+
+            var totalCount = await query.CountAsync();
+            var totalPages = (int)Math.Ceiling((double)totalCount / pageSize);
+
+            // Ensure page is within valid range
+            if (page < 1) page = 1;
+            if (page > totalPages && totalPages > 0) page = totalPages;
+
+            var toys = await query
+                .OrderBy(t => t.Name)
+                .Skip((page - 1) * pageSize)
+                .Take(pageSize)
+                .Select(t => new ToyListItemViewModel
+                {
+                    Id = t.Id,
+                    Name = t.Name,
+                    Price = t.Price,
+                    ImageUrl = t.ImageUrl,
+                    CategoryName = t.Category.Name,
+                    IsAvailable = t.IsAvailable,
+                })
+                .ToListAsync();
+
+            var categories = await db.Categories
+                .AsNoTracking()
+                .OrderBy(c => c.Name)
+                .Select(c => new CategoryDropdownViewModel {
+                    Id = c.Id,
+                    Name = c.Name
+                })
+                .ToListAsync();
+
+            return new ToyIndexViewModel
+            {
+                Toys = toys,
+                CategoryId = categoryId,
+                Categories = categories,
+                Pagination = new Web.ViewModels.Common.PaginationViewModel
+                {
+                    CurrentPage = page,
+                    PageSize = pageSize,
+                    TotalCount = totalCount,
+                    TotalPages = totalPages
+                }
+            };
+        }
+
         public async Task<ToyDetailsViewModel?> GetDetailsAsync(int id)
         {
             return await db.Toys

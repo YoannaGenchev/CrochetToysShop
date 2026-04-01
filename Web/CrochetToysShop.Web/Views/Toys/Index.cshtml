@@ -11,6 +11,28 @@
     <a asp-action="Create" class="btn btn-primary mb-3">+ Add toy</a>
 }
 
+<!-- Search Bar -->
+<form method="get" asp-action="Search" class="mb-4">
+    <div class="row g-2">
+        <div class="col-md-6">
+            <input type="text" name="q" class="form-control" placeholder="Search toys by name or description..." value="@ViewBag.SearchQuery" />
+        </div>
+        <div class="col-md-4">
+            <select name="categoryId" class="form-select">
+                <option value="">All categories</option>
+                @foreach (var category in Model.Categories)
+                {
+                    <option value="@category.Id" selected="@(Model.CategoryId == category.Id)">@category.Name</option>
+                }
+            </select>
+        </div>
+        <div class="col-md-2">
+            <button type="submit" class="btn btn-primary w-100">Search</button>
+        </div>
+    </div>
+</form>
+
+<!-- Category Filter -->
 <form method="get" asp-action="Index" class="mb-4">
     <div class="row g-2">
         <div class="col-md-4">

@@ -6,6 +6,8 @@ namespace CrochetToysShop.Services.Core.Interfaces
     {
         Task<ToyIndexViewModel> GetAllAsync(int? categoryId = null, int page = 1, int pageSize = 10);
 
+        Task<ToyIndexViewModel> SearchAsync(string? searchTerm = null, int? categoryId = null, int page = 1, int pageSize = 10);
+
         Task<ToyDetailsViewModel?> GetDetailsAsync(int id);
 
         Task<ToyFormViewModel> GetCreateModelAsync();
