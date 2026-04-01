@@ -3,6 +3,7 @@ using CrochetToysShop.Web.ViewModels.Orders;
 using CrochetToysShop.Web.ViewModels.Toys;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using System.Security.Claims;
 using static CrochetToysShop.Common.Constants.ApplicationConstants;
 
 namespace CrochetToysShop.Web.Controllers
@@ -46,6 +47,8 @@ namespace CrochetToysShop.Web.Controllers
 
             return View("Index", categoryModel);
         }
+        [HttpGet]
+        [Authorize(Roles = Roles.Admin)]
         public async Task<IActionResult> Create()
         {
             var model = await toyService.GetCreateModelAsync();
@@ -64,7 +67,8 @@ namespace CrochetToysShop.Web.Controllers
                 return View(model);
             }
 
-            await toyService.CreateAsync(model);
+            var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            await toyService.CreateAsync(model, userId);
 
             TempData[TempDataKeys.SuccessMessage] = SuccessMessages.ToyCreated;
             return RedirectToAction(nameof(Index));
@@ -89,10 +93,11 @@ namespace CrochetToysShop.Web.Controllers
         [Route("Toys/Edit/{id:int}")]
         public async Task<IActionResult> Edit(int id)
         {
-            var model = await toyService.GetEditModelAsync(id);
+            var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            var model = await toyService.GetEditModelAsync(id, userId);
             if (model == null)
             {
-                return NotFound();
+                return Forbid();
             }
 
             return View(model);
@@ -104,22 +109,24 @@ namespace CrochetToysShop.Web.Controllers
         [Route("Toys/Edit/{id:int}")]
         public async Task<IActionResult> Edit(int id, ToyFormViewModel model)
         {
+            var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+
             if (!ModelState.IsValid)
             {
-                var formModel = await toyService.GetEditModelAsync(id);
+                var formModel = await toyService.GetEditModelAsync(id, userId);
                 if (formModel == null)
                 {
-                    return NotFound();
+                    return Forbid();
                 }
 
                 model.Categories = formModel.Categories;
                 return View(model);
             }
 
-            var ok = await toyService.EditAsync(id, model);
+            var ok = await toyService.EditAsync(id, model, userId);
             if (!ok)
             {
-                return NotFound();
+                return Forbid();
             }
 
             TempData[TempDataKeys.SuccessMessage] = SuccessMessages.ToyEdited;
@@ -131,10 +138,11 @@ namespace CrochetToysShop.Web.Controllers
         [Route("Toys/Delete/{id:int}")]
         public async Task<IActionResult> Delete(int id)
         {
-            var model = await toyService.GetDeleteModelAsync(id);
+            var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            var model = await toyService.GetDeleteModelAsync(id, userId);
             if (model == null)
             {
-                return NotFound();
+                return Forbid();
             }
 
             return View(model);
@@ -147,10 +155,11 @@ namespace CrochetToysShop.Web.Controllers
         [ActionName("Delete")]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var ok = await toyService.DeleteAsync(id);
+            var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            var ok = await toyService.DeleteAsync(id, userId);
             if (!ok)
             {
-                return NotFound();
+                return Forbid();
             }
 
             TempData[TempDataKeys.SuccessMessage] = SuccessMessages.ToyDeleted;

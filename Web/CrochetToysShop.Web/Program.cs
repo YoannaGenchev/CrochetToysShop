@@ -67,11 +67,19 @@ static void SeedData(IServiceScope scope, ApplicationDbContext db)
     var userManager = scope.ServiceProvider.GetRequiredService<UserManager<IdentityUser>>();
 
     const string adminRole = Roles.Admin;
+    const string userRole = "User";
     const string adminEmail = AdminSeed.Email;
 
+    // Create Admin role
     if (!roleManager.Roles.Any(r => r.Name == adminRole))
     {
         roleManager.CreateAsync(new IdentityRole(adminRole)).GetAwaiter().GetResult();
+    }
+
+    // Create User role
+    if (!roleManager.Roles.Any(r => r.Name == userRole))
+    {
+        roleManager.CreateAsync(new IdentityRole(userRole)).GetAwaiter().GetResult();
     }
 
     var adminUser = userManager.FindByEmailAsync(adminEmail).GetAwaiter().GetResult();
@@ -91,6 +99,11 @@ static void SeedData(IServiceScope scope, ApplicationDbContext db)
     if (!userManager.IsInRoleAsync(adminUser, adminRole).GetAwaiter().GetResult())
     {
         userManager.AddToRoleAsync(adminUser, adminRole).GetAwaiter().GetResult();
+    }
+
+    if (!userManager.IsInRoleAsync(adminUser, userRole).GetAwaiter().GetResult())
+    {
+        userManager.AddToRoleAsync(adminUser, userRole).GetAwaiter().GetResult();
     }
 
     var existing = db.Categories.Select(c => c.Name).ToList();

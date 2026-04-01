@@ -33,6 +33,10 @@ namespace CrochetToysShop.Data.Models
 
         public int CategoryId { get; set; }
 
+        public string? CreatedByUserId { get; set; }
+
+        public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
+
         public Category Category { get; set; } = null!;
 
         public ICollection<OrderRequest> OrderRequests { get; set; } = new HashSet<OrderRequest>();

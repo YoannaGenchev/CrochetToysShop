@@ -26,6 +26,8 @@ namespace CrochetToysShop.Data.Models
 
         public int ToyId { get; set; }
 
+        public string? UserId { get; set; }
+
         public Toy Toy { get; set; } = null!;
     }
 }

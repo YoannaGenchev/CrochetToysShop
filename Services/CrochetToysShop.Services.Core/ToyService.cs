@@ -90,7 +90,7 @@ namespace CrochetToysShop.Services.Core
             };
         }
 
-        public async Task CreateAsync(ToyFormViewModel model)
+        public async Task CreateAsync(ToyFormViewModel model, string? userId = null)
         {
             var toy = new Toy
             {
@@ -102,28 +102,18 @@ namespace CrochetToysShop.Services.Core
                 Difficulty = model.Difficulty,
                 IsAvailable = model.IsAvailable,
                 CategoryId = model.CategoryId,
+                CreatedByUserId = userId
             };
 
             await db.Toys.AddAsync(toy);
             await db.SaveChangesAsync();
         }
 
-        public async Task<ToyFormViewModel?> GetEditModelAsync(int id)
+        public async Task<ToyFormViewModel?> GetEditModelAsync(int id, string? userId = null)
         {
             var toy = await db.Toys
                 .AsNoTracking()
                 .Where(t => t.Id == id)
-                .Select(t => new ToyFormViewModel
-                {
-                    Name = t.Name,
-                    Description = t.Description,
-                    Price = t.Price,
-                    ImageUrl = t.ImageUrl,
-                    SizeCm = t.SizeCm,
-                    Difficulty = t.Difficulty,
-                    IsAvailable = t.IsAvailable,
-                    CategoryId = t.CategoryId,
-                })
                 .FirstOrDefaultAsync();
 
             if (toy == null)
@@ -131,21 +121,45 @@ namespace CrochetToysShop.Services.Core
                 return null;
             }
 
-            toy.Categories = await db.Categories
+            // Check ownership
+            if (!string.IsNullOrEmpty(userId) && toy.CreatedByUserId != userId)
+            {
+                return null; // Unauthorized - not the creator
+            }
+
+            var model = new ToyFormViewModel
+            {
+                Name = toy.Name,
+                Description = toy.Description,
+                Price = toy.Price,
+                ImageUrl = toy.ImageUrl,
+                SizeCm = toy.SizeCm,
+                Difficulty = toy.Difficulty,
+                IsAvailable = toy.IsAvailable,
+                CategoryId = toy.CategoryId,
+            };
+
+            model.Categories = await db.Categories
                 .AsNoTracking()
                 .OrderBy(c => c.Name)
                 .Select(c => new CategoryDropdownViewModel { Id = c.Id, Name = c.Name })
                 .ToListAsync();
 
-            return toy;
+            return model;
         }
 
-        public async Task<bool> EditAsync(int id, ToyFormViewModel model)
+        public async Task<bool> EditAsync(int id, ToyFormViewModel model, string? userId = null)
         {
             var toy = await db.Toys.FindAsync(id);
             if (toy == null)
             {
                 return false;
+            }
+
+            // Check ownership
+            if (!string.IsNullOrEmpty(userId) && toy.CreatedByUserId != userId)
+            {
+                return false; // Unauthorized - not the creator
             }
 
             toy.Name = model.Name;
@@ -161,21 +175,39 @@ namespace CrochetToysShop.Services.Core
             return true;
         }
 
-        public async Task<ToyDeleteViewModel?> GetDeleteModelAsync(int id)
+        public async Task<ToyDeleteViewModel?> GetDeleteModelAsync(int id, string? userId = null)
         {
-            return await db.Toys
+            var toy = await db.Toys
                 .AsNoTracking()
                 .Where(t => t.Id == id)
-                .Select(t => new ToyDeleteViewModel { Id = t.Id, Name = t.Name })
                 .FirstOrDefaultAsync();
+
+            if (toy == null)
+            {
+                return null;
+            }
+
+            // Check ownership
+            if (!string.IsNullOrEmpty(userId) && toy.CreatedByUserId != userId)
+            {
+                return null; // Unauthorized - not the creator
+            }
+
+            return new ToyDeleteViewModel { Id = toy.Id, Name = toy.Name };
         }
 
-        public async Task<bool> DeleteAsync(int id)
+        public async Task<bool> DeleteAsync(int id, string? userId = null)
         {
             var toy = await db.Toys.FindAsync(id);
             if (toy == null)
             {
                 return false;
+            }
+
+            // Check ownership
+            if (!string.IsNullOrEmpty(userId) && toy.CreatedByUserId != userId)
+            {
+                return false; // Unauthorized - not the creator
             }
 
             db.Toys.Remove(toy);
