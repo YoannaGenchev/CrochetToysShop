@@ -15,7 +15,7 @@ namespace CrochetToysShop.Services.Core
             this.db = db;
         }
 
-        public async Task<ToyIndexViewModel> GetAllAsync(int? categoryId = null)
+        public async Task<ToyIndexViewModel> GetAllAsync(int? categoryId = null, int page = 1, int pageSize = 10)
         {
             var query = db.Toys
                 .AsNoTracking()
@@ -27,8 +27,17 @@ namespace CrochetToysShop.Services.Core
                 query = query.Where(t => t.CategoryId == categoryId.Value);
             }
 
+            var totalCount = await query.CountAsync();
+            var totalPages = (int)Math.Ceiling((double)totalCount / pageSize);
+
+            // Ensure page is within valid range
+            if (page < 1) page = 1;
+            if (page > totalPages && totalPages > 0) page = totalPages;
+
             var toys = await query
                 .OrderBy(t => t.Name)
+                .Skip((page - 1) * pageSize)
+                .Take(pageSize)
                 .Select(t => new ToyListItemViewModel
                 {
                     Id = t.Id,
@@ -53,7 +62,14 @@ namespace CrochetToysShop.Services.Core
             {
                 Toys = toys,
                 CategoryId = categoryId,
-                Categories = categories
+                Categories = categories,
+                Pagination = new Web.ViewModels.Common.PaginationViewModel
+                {
+                    CurrentPage = page,
+                    PageSize = pageSize,
+                    TotalCount = totalCount,
+                    TotalPages = totalPages
+                }
             };
         }
 

@@ -8,7 +8,7 @@ namespace CrochetToysShop.Services.Core.Interfaces
 
         Task<(bool ok, string? error, int toyId)> CreateOrderAsync(OrderCreateViewModel model);
 
-        Task<IEnumerable<OrderAdminListItemViewModel>> GetAllForAdminAsync();
+        Task<OrderIndexViewModel> GetAllForAdminAsync(int page = 1, int pageSize = 10);
 
         Task<bool> MarkCompletedAsync(int id);
     }

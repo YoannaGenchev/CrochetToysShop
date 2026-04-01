@@ -4,7 +4,7 @@ namespace CrochetToysShop.Services.Core.Interfaces
 {
     public interface ICourseService
     {
-        Task<CourseIndexViewModel> GetAllAsync(string? difficultyFilter = null);
+        Task<CourseIndexViewModel> GetAllAsync(string? difficultyFilter = null, int page = 1, int pageSize = 10);
 
         Task<CourseDetailsViewModel?> GetDetailsAsync(int id, string? userId = null);
 

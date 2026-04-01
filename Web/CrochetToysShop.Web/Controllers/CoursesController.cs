@@ -16,9 +16,9 @@ namespace CrochetToysShop.Web.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> Index(string? difficulty)
+        public async Task<IActionResult> Index(string? difficulty, int page = 1)
         {
-            var model = await courseService.GetAllAsync(difficulty);
+            var model = await courseService.GetAllAsync(difficulty, page);
             return View(model);
         }
 

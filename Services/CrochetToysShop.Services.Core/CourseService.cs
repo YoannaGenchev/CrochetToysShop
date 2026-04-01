@@ -14,7 +14,7 @@ namespace CrochetToysShop.Services.Core
             this.db = db;
         }
 
-        public async Task<CourseIndexViewModel> GetAllAsync(string? difficultyFilter = null)
+        public async Task<CourseIndexViewModel> GetAllAsync(string? difficultyFilter = null, int page = 1, int pageSize = 10)
         {
             var query = db.Courses
                 .AsNoTracking()
@@ -26,8 +26,17 @@ namespace CrochetToysShop.Services.Core
                 query = query.Where(c => c.Difficulty == difficultyFilter);
             }
 
+            var totalCount = await query.CountAsync();
+            var totalPages = (int)Math.Ceiling((double)totalCount / pageSize);
+
+            // Ensure page is within valid range
+            if (page < 1) page = 1;
+            if (page > totalPages && totalPages > 0) page = totalPages;
+
             var courses = await query
                 .OrderBy(c => c.Name)
+                .Skip((page - 1) * pageSize)
+                .Take(pageSize)
                 .Select(c => new CourseListItemViewModel
                 {
                     Id = c.Id,
@@ -44,7 +53,14 @@ namespace CrochetToysShop.Services.Core
             return new CourseIndexViewModel
             {
                 Courses = courses,
-                DifficultyFilter = difficultyFilter
+                DifficultyFilter = difficultyFilter,
+                Pagination = new Web.ViewModels.Common.PaginationViewModel
+                {
+                    CurrentPage = page,
+                    PageSize = pageSize,
+                    TotalCount = totalCount,
+                    TotalPages = totalPages
+                }
             };
         }
 

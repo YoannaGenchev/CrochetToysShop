@@ -57,7 +57,45 @@ else
                         <a asp-action="Details" asp-route-id="@course.Id" class="btn btn-outline-primary w-100">View Details</a>
                     </div>
                 </div>
-            </div>
-        }
+     </div>
+}
+
+<!-- Pagination Controls -->
+@if (Model.Pagination.TotalPages > 1)
+{
+    <nav aria-label="Page navigation" class="mt-4">
+        <ul class="pagination justify-content-center">
+            @if (Model.Pagination.HasPreviousPage)
+            {
+                <li class="page-item">
+                    <a class="page-link" asp-action="Index" asp-route-difficulty="@Model.DifficultyFilter" asp-route-page="1">First</a>
+                </li>
+                <li class="page-item">
+                    <a class="page-link" asp-action="Index" asp-route-difficulty="@Model.DifficultyFilter" asp-route-page="@(Model.Pagination.CurrentPage - 1)">Previous</a>
+                </li>
+            }
+
+            @foreach (var pageNumber in Model.Pagination.PageNumbers)
+            {
+                <li class="page-item @(pageNumber == Model.Pagination.CurrentPage ? "active" : "")">
+                    <a class="page-link" asp-action="Index" asp-route-difficulty="@Model.DifficultyFilter" asp-route-page="@pageNumber">@pageNumber</a>
+                </li>
+            }
+
+            @if (Model.Pagination.HasNextPage)
+            {
+                <li class="page-item">
+                    <a class="page-link" asp-action="Index" asp-route-difficulty="@Model.DifficultyFilter" asp-route-page="@(Model.Pagination.CurrentPage + 1)">Next</a>
+                </li>
+                <li class="page-item">
+                    <a class="page-link" asp-action="Index" asp-route-difficulty="@Model.DifficultyFilter" asp-route-page="@Model.Pagination.TotalPages">Last</a>
+                </li>
+            }
+        </ul>
+    </nav>
+    <div class="text-center text-muted mt-2">
+        <small>Page @Model.Pagination.CurrentPage of @Model.Pagination.TotalPages (Total: @Model.Pagination.TotalCount items)</small>
+    </div>
+}
     </div>
 }

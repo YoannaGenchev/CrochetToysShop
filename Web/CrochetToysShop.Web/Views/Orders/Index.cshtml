@@ -1,4 +1,4 @@
-@model IEnumerable<CrochetToysShop.Web.ViewModels.Orders.OrderAdminListItemViewModel>
+@model CrochetToysShop.Web.ViewModels.Orders.OrderIndexViewModel
 
 @{
     ViewData["Title"] = "Orders";
@@ -6,7 +6,7 @@
 
 <h2 class="mb-4">Orders</h2>
 
-@if (!Model.Any())
+@if (!Model.Orders.Any())
 {
     <div class="alert alert-info">No orders yet.</div>
 }
@@ -26,7 +26,7 @@ else
             </tr>
         </thead>
         <tbody>
-            @foreach (var o in Model)
+            @foreach (var o in Model.Orders)
             {
                 <tr>
                     <td>@o.Id</td>
@@ -61,4 +61,42 @@ else
             }
         </tbody>
     </table>
+
+    <!-- Pagination Controls -->
+    @if (Model.Pagination.TotalPages > 1)
+    {
+        <nav aria-label="Page navigation" class="mt-4">
+            <ul class="pagination justify-content-center">
+                @if (Model.Pagination.HasPreviousPage)
+                {
+                    <li class="page-item">
+                        <a class="page-link" asp-action="Index" asp-route-page="1">First</a>
+                    </li>
+                    <li class="page-item">
+                        <a class="page-link" asp-action="Index" asp-route-page="@(Model.Pagination.CurrentPage - 1)">Previous</a>
+                    </li>
+                }
+
+                @foreach (var pageNumber in Model.Pagination.PageNumbers)
+                {
+                    <li class="page-item @(pageNumber == Model.Pagination.CurrentPage ? "active" : "")">
+                        <a class="page-link" asp-action="Index" asp-route-page="@pageNumber">@pageNumber</a>
+                    </li>
+                }
+
+                @if (Model.Pagination.HasNextPage)
+                {
+                    <li class="page-item">
+                        <a class="page-link" asp-action="Index" asp-route-page="@(Model.Pagination.CurrentPage + 1)">Next</a>
+                    </li>
+                    <li class="page-item">
+                        <a class="page-link" asp-action="Index" asp-route-page="@Model.Pagination.TotalPages">Last</a>
+                    </li>
+                }
+            </ul>
+        </nav>
+        <div class="text-center text-muted mt-2">
+            <small>Page @Model.Pagination.CurrentPage of @Model.Pagination.TotalPages (Total: @Model.Pagination.TotalCount items)</small>
+        </div>
+    }
 }

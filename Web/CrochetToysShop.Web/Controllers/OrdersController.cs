@@ -15,10 +15,10 @@ namespace CrochetToysShop.Web.Controllers
             this.orderService = orderService;
         }
 
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index(int page = 1)
         {
-            var orders = await orderService.GetAllForAdminAsync();
-            return View(orders);
+            var model = await orderService.GetAllForAdminAsync(page);
+            return View(model);
         }
 
         [HttpPost]

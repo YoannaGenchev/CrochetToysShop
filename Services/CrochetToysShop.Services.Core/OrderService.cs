@@ -17,12 +17,24 @@ namespace CrochetToysShop.Services.Core
             this.db = db;
         }
 
-        public async Task<IEnumerable<OrderAdminListItemViewModel>> GetAllForAdminAsync()
+        public async Task<OrderIndexViewModel> GetAllForAdminAsync(int page = 1, int pageSize = 10)
         {
-            return await db.Orders
+            var query = db.Orders
                 .AsNoTracking()
                 .Include(o => o.Toy)
+                .AsQueryable();
+
+            var totalCount = await query.CountAsync();
+            var totalPages = (int)Math.Ceiling((double)totalCount / pageSize);
+
+            // Ensure page is within valid range
+            if (page < 1) page = 1;
+            if (page > totalPages && totalPages > 0) page = totalPages;
+
+            var orders = await query
                 .OrderByDescending(o => o.CreatedOn)
+                .Skip((page - 1) * pageSize)
+                .Take(pageSize)
                 .Select(o => new OrderAdminListItemViewModel
                 {
                     Id = o.Id,
@@ -35,6 +47,18 @@ namespace CrochetToysShop.Services.Core
                     ToyName = o.Toy.Name,
                 })
                 .ToListAsync();
+
+            return new OrderIndexViewModel
+            {
+                Orders = orders,
+                Pagination = new Web.ViewModels.Common.PaginationViewModel
+                {
+                    CurrentPage = page,
+                    PageSize = pageSize,
+                    TotalCount = totalCount,
+                    TotalPages = totalPages
+                }
+            };
         }
 
         public async Task<bool> MarkCompletedAsync(int id)

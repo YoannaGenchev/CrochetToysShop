@@ -19,9 +19,9 @@ namespace CrochetToysShop.Web.Controllers
             this.orderService = orderService;
         }
 
-        public async Task<IActionResult> Index(int? categoryId)
+        public async Task<IActionResult> Index(int? categoryId, int page = 1)
         {
-            var model = await toyService.GetAllAsync(categoryId);
+            var model = await toyService.GetAllAsync(categoryId, page);
             return View(model);
         }
 
