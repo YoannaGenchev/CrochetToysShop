@@ -11,44 +11,33 @@
     <a asp-action="Create" class="btn btn-primary mb-3">+ Add toy</a>
 }
 
-<!-- Search Bar -->
-<form method="get" asp-action="Search" class="mb-4">
-    <div class="row g-2">
-        <div class="col-md-6">
-            <input type="text" name="q" class="form-control" placeholder="Search toys by name or description..." value="@ViewBag.SearchQuery" />
-        </div>
-        <div class="col-md-4">
-            <select name="categoryId" class="form-select">
-                <option value="">All categories</option>
-                @foreach (var category in Model.Categories)
-                {
-                    <option value="@category.Id" selected="@(Model.CategoryId == category.Id)">@category.Name</option>
-                }
-            </select>
-        </div>
-        <div class="col-md-2">
-            <button type="submit" class="btn btn-primary w-100">Search</button>
-        </div>
+<!-- Quick Links & Search -->
+<div class="row mb-4">
+    <div class="col-md-3">
+        <a asp-action="Index" asp-route-categoryId="6" class="btn btn-warning w-100">🌸 Easter Collection</a>
     </div>
-</form>
-
-<!-- Category Filter -->
-<form method="get" asp-action="Index" class="mb-4">
-    <div class="row g-2">
-        <div class="col-md-4">
-            <select asp-for="CategoryId" class="form-select">
-                <option value="">All categories</option>
-                @foreach (var category in Model.Categories)
-                {
-                    <option value="@category.Id" selected="@(Model.CategoryId == category.Id)">@category.Name</option>
-                }
-            </select>
-        </div>
-        <div class="col-md-2">
-            <button type="submit" class="btn btn-primary w-100">Filter</button>
-        </div>
+    <div class="col-md-9">
+        <form method="get" asp-action="Search">
+            <div class="row g-2">
+                <div class="col-md-8">
+                    <input type="text" name="q" class="form-control" placeholder="Search toys by name or description..." value="@ViewBag.SearchQuery" />
+                </div>
+                <div class="col-md-3">
+                    <select name="categoryId" class="form-select">
+                        <option value="">All categories</option>
+                        @foreach (var category in Model.Categories)
+                        {
+                            <option value="@category.Id" selected="@(Model.CategoryId == category.Id)">@category.Name</option>
+                        }
+                    </select>
+                </div>
+                <div class="col-md-1">
+                    <button type="submit" class="btn btn-primary w-100">🔍</button>
+                </div>
+            </div>
+        </form>
     </div>
-</form>
+</div>
 
 @if (!Model.Toys.Any())
 {
