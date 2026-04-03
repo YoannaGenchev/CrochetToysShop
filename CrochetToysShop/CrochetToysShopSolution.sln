@@ -1,0 +1,84 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.14.36623.8
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Data", "Data", "{8EC462FD-D22E-90A8-E5CE-7E832BA40C5D}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Services", "Services", "{02EA681E-C7D8-13C7-8484-4AC65E1B71E8}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "Tests", "{9A177621-9F14-4282-8469-7A9C3A635BAA}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Web", "Web", "{682CDED8-894F-4781-B171-4C496FA3C048}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CrochetToysShop.Common", "CrochetToysShop.Common\CrochetToysShop.Common.csproj", "{F9900615-1E0D-AA65-7A9A-AFEDAF66AD49}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CrochetToysShop.Data", "CrochetToysShop.Data\CrochetToysShop.Data.csproj", "{D8B7ABF5-1960-E6EB-359C-AB2671108746}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CrochetToysShop.Data.Models", "CrochetToysShop.Data.Models\CrochetToysShop.Data.Models.csproj", "{0BEE53A6-A1D7-7CDB-F19D-9A7657531058}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CrochetToysShop.Services.Core", "CrochetToysShop.Services.Core\CrochetToysShop.Services.Core.csproj", "{06F7B210-823F-AE92-11FB-7B32FFDC1B93}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CrochetToysShop.Services.Models", "CrochetToysShop.Services.Models\CrochetToysShop.Services.Models.csproj", "{16E1B71D-7CA5-1844-42C2-CD606745228A}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CrochetToysShop.Services.Tests", "CrochetToysShop.Services.Tests\CrochetToysShop.Services.Tests.csproj", "{1DB2F9E5-7FF8-3224-C5EA-A70CEA68631D}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CrochetToysShop.IntegrationTests", "CrochetToysShop.IntegrationTests\CrochetToysShop.IntegrationTests.csproj", "{1C4C027B-EB79-0B81-E5E5-923AD39E3F1B}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CrochetToysShop.Web.ViewModels", "CrochetToysShop.Web.ViewModels\CrochetToysShop.Web.ViewModels.csproj", "{DE7197F6-E5DF-E3AA-713C-8C6BEFA116D6}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{F9900615-1E0D-AA65-7A9A-AFEDAF66AD49}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F9900615-1E0D-AA65-7A9A-AFEDAF66AD49}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F9900615-1E0D-AA65-7A9A-AFEDAF66AD49}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F9900615-1E0D-AA65-7A9A-AFEDAF66AD49}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D8B7ABF5-1960-E6EB-359C-AB2671108746}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D8B7ABF5-1960-E6EB-359C-AB2671108746}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D8B7ABF5-1960-E6EB-359C-AB2671108746}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D8B7ABF5-1960-E6EB-359C-AB2671108746}.Release|Any CPU.Build.0 = Release|Any CPU
+		{0BEE53A6-A1D7-7CDB-F19D-9A7657531058}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0BEE53A6-A1D7-7CDB-F19D-9A7657531058}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0BEE53A6-A1D7-7CDB-F19D-9A7657531058}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0BEE53A6-A1D7-7CDB-F19D-9A7657531058}.Release|Any CPU.Build.0 = Release|Any CPU
+		{06F7B210-823F-AE92-11FB-7B32FFDC1B93}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{06F7B210-823F-AE92-11FB-7B32FFDC1B93}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{06F7B210-823F-AE92-11FB-7B32FFDC1B93}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{06F7B210-823F-AE92-11FB-7B32FFDC1B93}.Release|Any CPU.Build.0 = Release|Any CPU
+		{16E1B71D-7CA5-1844-42C2-CD606745228A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{16E1B71D-7CA5-1844-42C2-CD606745228A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{16E1B71D-7CA5-1844-42C2-CD606745228A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{16E1B71D-7CA5-1844-42C2-CD606745228A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1DB2F9E5-7FF8-3224-C5EA-A70CEA68631D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1DB2F9E5-7FF8-3224-C5EA-A70CEA68631D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1DB2F9E5-7FF8-3224-C5EA-A70CEA68631D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1DB2F9E5-7FF8-3224-C5EA-A70CEA68631D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1C4C027B-EB79-0B81-E5E5-923AD39E3F1B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1C4C027B-EB79-0B81-E5E5-923AD39E3F1B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1C4C027B-EB79-0B81-E5E5-923AD39E3F1B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1C4C027B-EB79-0B81-E5E5-923AD39E3F1B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{DE7197F6-E5DF-E3AA-713C-8C6BEFA116D6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{DE7197F6-E5DF-E3AA-713C-8C6BEFA116D6}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{DE7197F6-E5DF-E3AA-713C-8C6BEFA116D6}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{DE7197F6-E5DF-E3AA-713C-8C6BEFA116D6}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{D8B7ABF5-1960-E6EB-359C-AB2671108746} = {8EC462FD-D22E-90A8-E5CE-7E832BA40C5D}
+		{0BEE53A6-A1D7-7CDB-F19D-9A7657531058} = {8EC462FD-D22E-90A8-E5CE-7E832BA40C5D}
+		{06F7B210-823F-AE92-11FB-7B32FFDC1B93} = {02EA681E-C7D8-13C7-8484-4AC65E1B71E8}
+		{16E1B71D-7CA5-1844-42C2-CD606745228A} = {02EA681E-C7D8-13C7-8484-4AC65E1B71E8}
+		{1DB2F9E5-7FF8-3224-C5EA-A70CEA68631D} = {9A177621-9F14-4282-8469-7A9C3A635BAA}
+		{1C4C027B-EB79-0B81-E5E5-923AD39E3F1B} = {9A177621-9F14-4282-8469-7A9C3A635BAA}
+		{DE7197F6-E5DF-E3AA-713C-8C6BEFA116D6} = {682CDED8-894F-4781-B171-4C496FA3C048}
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {0BDFC2C2-1116-4CFC-B8B9-ED6698775F49}
+	EndGlobalSection
+EndGlobal

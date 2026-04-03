@@ -1,0 +1,24 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\Data\CrochetToysShop.Data\CrochetToysShop.Data.csproj" />
+    <ProjectReference Include="..\..\Data\CrochetToysShop.Data.Models\CrochetToysShop.Data.Models.csproj" />
+    <ProjectReference Include="..\CrochetToysShop.Common\CrochetToysShop.Common.csproj" />
+    <ProjectReference Include="..\CrochetToysShop.Data\CrochetToysShop.Data.csproj" />
+    <ProjectReference Include="..\CrochetToysShop.Services.Models\CrochetToysShop.Services.Models.csproj" />
+    <ProjectReference Include="..\..\CrochetToysShop.Common\CrochetToysShop.Common.csproj" />
+    <ProjectReference Include="..\..\Web\CrochetToysShop.Web.ViewModels\CrochetToysShop.Web.ViewModels.csproj" />
+    <ProjectReference Include="..\CrochetToysShop.Web.ViewModels\CrochetToysShop.Web.ViewModels.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.EntityFrameworkCore" Version="8.0.21" />
+  </ItemGroup>
+
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+</Project>
