@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <ItemGroup>
-    <ProjectReference Include="..\..\CrochetToysShop.Common\CrochetToysShop.Common.csproj" />
+    <ProjectReference Include="..\CrochetToysShop.Common\CrochetToysShop.Common.csproj" />
   </ItemGroup>
 
   <PropertyGroup>

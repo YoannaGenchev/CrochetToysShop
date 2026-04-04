@@ -7,7 +7,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="../../Services/CrochetToysShop.Services.Models/CrochetToysShop.Services.Models.csproj" />
+    <ProjectReference Include="..\CrochetToysShop.Services.Models\CrochetToysShop.Services.Models.csproj" />
   </ItemGroup>
 
 </Project>

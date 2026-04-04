@@ -1,4 +1,4 @@
-namespace CrochetToysShop.Common.Constants
+﻿namespace CrochetToysShop.Common.Constants
 {
     public static class EntityValidationConstants
     {
@@ -19,6 +19,8 @@ namespace CrochetToysShop.Common.Constants
             public const int SizeMaxCm = 200;
             public const int DifficultyMaxLength = 20;
             public const string DefaultDifficulty = "Easy";
+            public const string ImageUrlPattern = @"^/images/toys/.*\.(jpg|jpeg|png|webp)$";
+            public const string ImageUrlPatternErrorMessage = "Моля въведи път като /images/toys/име.jpg";
         }
 
         public static class Order

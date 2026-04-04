@@ -5,15 +5,19 @@
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
     <IsPackable>false</IsPackable>
+    <IsTestProject>true</IsTestProject>
   </PropertyGroup>
 
   <ItemGroup>
     <PackageReference Include="coverlet.collector" Version="6.0.2" />
-    <PackageReference Include="Microsoft.EntityFrameworkCore.InMemory" Version="8.0.0" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.InMemory" Version="8.0.21" />
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.12.0" />
     <PackageReference Include="Moq" Version="4.20.70" />
     <PackageReference Include="xunit" Version="2.9.2" />
-    <PackageReference Include="xunit.runner.visualstudio" Version="2.8.2" />
+    <PackageReference Include="xunit.runner.visualstudio" Version="2.8.2">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
   </ItemGroup>
 
   <ItemGroup>
@@ -21,9 +25,9 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\Services\CrochetToysShop.Services.Core\CrochetToysShop.Services.Core.csproj" />
-    <ProjectReference Include="..\..\Services\CrochetToysShop.Services.Models\CrochetToysShop.Services.Models.csproj" />
-    <ProjectReference Include="..\..\Data\CrochetToysShop.Data\CrochetToysShop.Data.csproj" />
+    <ProjectReference Include="..\CrochetToysShop.Services.Core\CrochetToysShop.Services.Core.csproj" />
+    <ProjectReference Include="..\CrochetToysShop.Services.Models\CrochetToysShop.Services.Models.csproj" />
+    <ProjectReference Include="..\CrochetToysShop.Data\CrochetToysShop.Data.csproj" />
   </ItemGroup>
 
 </Project>

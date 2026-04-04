@@ -1,5 +1,7 @@
 using CrochetToysShop.Data.Models;
+using CrochetToysShop.Data.Configuration;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using static CrochetToysShop.Common.Constants.ApplicationConstants;
 
@@ -13,10 +15,19 @@ namespace CrochetToysShop.Data.Seeding
 
             var roleManager = scope.ServiceProvider.GetRequiredService<RoleManager<IdentityRole>>();
             var userManager = scope.ServiceProvider.GetRequiredService<UserManager<IdentityUser>>();
+            var configuration = scope.ServiceProvider.GetRequiredService<IConfiguration>();
+            var adminSettings = configuration
+                .GetSection(AdminSeedSettings.SectionName)
+                .Get<AdminSeedSettings>();
+
+            if (adminSettings == null)
+            {
+                throw new InvalidOperationException("AdminSeed settings are missing.");
+            }
 
             const string adminRole = Roles.Admin;
             const string userRole = "User";
-            const string adminEmail = AdminSeed.Email;
+            var adminEmail = adminSettings.Email;
 
             if (!roleManager.Roles.Any(r => r.Name == adminRole))
             {
@@ -39,7 +50,7 @@ namespace CrochetToysShop.Data.Seeding
                     EmailConfirmed = true,
                 };
 
-                userManager.CreateAsync(adminUser, AdminSeed.Password).GetAwaiter().GetResult();
+                userManager.CreateAsync(adminUser, adminSettings.Password).GetAwaiter().GetResult();
             }
 
             if (!userManager.IsInRoleAsync(adminUser, adminRole).GetAwaiter().GetResult())

@@ -5,6 +5,7 @@ namespace CrochetToysShop.Common.Constants
         public static class Roles
         {
             public const string Admin = "Admin";
+            public const string User = "User";
         }
 
         public static class TempDataKeys
@@ -27,12 +28,6 @@ namespace CrochetToysShop.Common.Constants
             public const string ToyNotFound = "Играчката не е намерена.";
             public const string ToyNotAvailable = "Тази играчка вече е изчерпана.";
             public const string MissingDefaultConnectionString = "Connection string 'DefaultConnection' not found.";
-        }
-
-        public static class AdminSeed
-        {
-            public const string Email = "yoanna@admin.com";
-            public const string Password = "admin1";
         }
 
         public static class UILabels
