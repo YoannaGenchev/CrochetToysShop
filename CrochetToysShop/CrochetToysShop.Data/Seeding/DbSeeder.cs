@@ -28,6 +28,12 @@ namespace CrochetToysShop.Data.Seeding
             const string adminRole = Roles.Admin;
             const string userRole = "User";
             var adminEmail = adminSettings.Email;
+            var adminPassword = Environment.GetEnvironmentVariable("ADMIN_SEED_PASSWORD");
+
+            if (string.IsNullOrWhiteSpace(adminPassword))
+            {
+                throw new InvalidOperationException("Admin seed password is missing. Set ADMIN_SEED_PASSWORD.");
+            }
 
             if (!roleManager.Roles.Any(r => r.Name == adminRole))
             {
@@ -50,7 +56,7 @@ namespace CrochetToysShop.Data.Seeding
                     EmailConfirmed = true,
                 };
 
-                userManager.CreateAsync(adminUser, adminSettings.Password).GetAwaiter().GetResult();
+                userManager.CreateAsync(adminUser, adminPassword).GetAwaiter().GetResult();
             }
 
             if (!userManager.IsInRoleAsync(adminUser, adminRole).GetAwaiter().GetResult())

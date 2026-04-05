@@ -3,6 +3,7 @@ using CrochetToysShop.Services.Core;
 using CrochetToysShop.Services.Core.Interfaces;
 using CrochetToysShop.Web.Extensions;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using static CrochetToysShop.Common.Constants.ApplicationConstants;
 
@@ -36,7 +37,10 @@ builder.Services.AddScoped<IOrderService, OrderService>();
 builder.Services.AddScoped<ICourseService, CourseService>();
 builder.Services.AddMemoryCache();
 
-builder.Services.AddControllersWithViews();
+builder.Services.AddControllersWithViews(options =>
+{
+    options.Filters.Add(new AutoValidateAntiforgeryTokenAttribute());
+});
 builder.Services.AddHttpLogging(options =>
 {
     options.LoggingFields =
