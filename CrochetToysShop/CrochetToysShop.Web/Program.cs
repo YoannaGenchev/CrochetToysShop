@@ -1,11 +1,12 @@
 using CrochetToysShop.Data;
-using CrochetToysShop.Data.Seeding;
 using CrochetToysShop.Services.Core;
 using CrochetToysShop.Services.Core.Interfaces;
+using CrochetToysShop.Web.Extensions;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using static CrochetToysShop.Common.Constants.ApplicationConstants;
 
+// Services
 var builder = WebApplication.CreateBuilder(args);
 
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection")
@@ -36,24 +37,22 @@ builder.Services.AddScoped<ICourseService, CourseService>();
 builder.Services.AddMemoryCache();
 
 builder.Services.AddControllersWithViews();
+builder.Services.AddHttpLogging(options =>
+{
+    options.LoggingFields =
+        Microsoft.AspNetCore.HttpLogging.HttpLoggingFields.RequestMethod |
+        Microsoft.AspNetCore.HttpLogging.HttpLoggingFields.RequestPath |
+        Microsoft.AspNetCore.HttpLogging.HttpLoggingFields.ResponseStatusCode |
+        Microsoft.AspNetCore.HttpLogging.HttpLoggingFields.Duration;
+});
 
+// Build app
 var app = builder.Build();
 
-using (var scope = app.Services.CreateScope())
-{
-    var db = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
+// Database initialization
+app.ApplyMigrationsAndSeed();
 
-    try
-    {
-        db.Database.Migrate();
-        DbSeeder.Seed(scope, db);
-    }
-    catch (Exception ex)
-    {
-        app.Logger.LogError(ex, "Startup database migration/seeding failed.");
-    }
-}
-
+// Environment configuration
 if (app.Environment.IsDevelopment())
 {
     app.UseMigrationsEndPoint();
@@ -64,16 +63,19 @@ else
     app.UseHsts();
 }
 
-app.UseStatusCodePagesWithRedirects("/error/{0}");
+// Middleware pipeline
+app.UseStatusCodePagesWithReExecute("/error/{0}");
 
 app.UseHttpsRedirection();
 app.UseStaticFiles();
 
 app.UseRouting();
+app.UseHttpLogging();
 
 app.UseAuthentication();
 app.UseAuthorization();
 
+// Routing
 app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Home}/{action=Index}/{id?}");

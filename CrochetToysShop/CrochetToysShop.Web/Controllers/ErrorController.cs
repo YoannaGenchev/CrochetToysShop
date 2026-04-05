@@ -7,6 +7,8 @@ namespace CrochetToysShop.Web.Controllers
         [Route("/error/{statusCode}")]
         public IActionResult HandleError(int statusCode)
         {
+            Response.StatusCode = statusCode;
+
             return statusCode switch
             {
                 404 => View("NotFound"),
