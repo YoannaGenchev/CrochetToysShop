@@ -38,7 +38,7 @@ namespace CrochetToysShop.Web.Controllers
         }
 
         [HttpPost]
-        [Authorize]
+        [Authorize(Roles = Roles.User)]
         [Route("Courses/Enroll/{id:int}")]
         public async Task<IActionResult> Enroll(int id)
         {

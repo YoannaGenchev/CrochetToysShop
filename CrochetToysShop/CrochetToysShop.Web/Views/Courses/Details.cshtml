@@ -53,19 +53,22 @@
             <a asp-action="Index" class="btn btn-secondary">Back to Courses</a>
             @if (User.Identity?.IsAuthenticated == true)
             {
-                @if (Model.IsUserEnrolled)
+                @if (User.IsInRole("User"))
                 {
-                    <button type="button" class="btn btn-success" disabled>Already Enrolled</button>
-                }
-                else if (Model.CanEnroll)
-                {
-                    <form asp-action="Enroll" asp-route-id="@Model.Id" method="post" style="display: inline;">
-                        <button type="submit" class="btn btn-primary">Enroll Now</button>
-                    </form>
-                }
-                else
-                {
-                    <button type="button" class="btn btn-danger" disabled>Course Full</button>
+                    @if (Model.IsUserEnrolled)
+                    {
+                        <button type="button" class="btn btn-success" disabled>Already Enrolled</button>
+                    }
+                    else if (Model.CanEnroll)
+                    {
+                        <form asp-action="Enroll" asp-route-id="@Model.Id" method="post" style="display: inline;">
+                            <button type="submit" class="btn btn-primary">Enroll Now</button>
+                        </form>
+                    }
+                    else
+                    {
+                        <button type="button" class="btn btn-danger" disabled>Course Full</button>
+                    }
                 }
             }
             else
