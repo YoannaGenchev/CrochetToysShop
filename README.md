@@ -1,25 +1,10 @@
 ﻿# 🧶 CrochetToysShop — Handmade Toys Store Platform
 
-A web application for browsing, managing, and ordering handmade crochet toys, combined with a learning module for crochet courses — built with **ASP.NET Core MVC**, **Entity Framework Core**, and **ASP.NET Identity**.
+A full-stack ASP.NET Core MVC web application for browsing, managing, and ordering handmade crochet toys, combined with a learning module for crochet courses.
 
-The goal of the project is to simulate a real-world online store with **role-based access**, **structured data management**, and **user interaction flows**.
+Built with **ASP.NET Core MVC**, **Entity Framework Core**, and **ASP.NET Identity**.
 
----
-
-# 📑 Contents
-- [Project at a glance](#-project-at-a-glance)
-- [Key features](#-key-features)
-- [Architecture](#-architecture)
-- [Access & Roles](#-access--roles)
-- [Database model](#-database-model)
-- [UI structure](#-ui-structure)
-- [Tech stack](#-tech-stack)
-- [Getting started](#-getting-started)
-- [EF Core migrations](#-ef-core-migrations)
-- [Testing](#-testing)
-- [My main achievements](#-my-main-achievements)
-- [What I learned](#-what-i-learned)
-- [Future improvements](#-future-improvements)
+The project simulates a real-world online store with **role-based access**, **structured data management**, and **user interaction flows**.
 
 ---
 
@@ -38,50 +23,66 @@ The goal of the project is to simulate a real-world online store with **role-bas
 # ⭐ Key features
 
 ## 🛍️ Toys
-- Full CRUD for administrators  
 - Public browsing  
 - Category filtering  
-- Search  
+- Search functionality  
 - Availability tracking  
+- Full CRUD for administrators  
 
 ## 📦 Orders
-- Place orders  
-- Admin manages orders  
+- Visitors can submit orders  
+- Admin manages order lifecycle  
 
 ## 🎓 Courses
-- Browse courses  
-- User-only enrollment  
+- Browse available courses  
+- Enrollment available for registered users  
 
-## 🔐 Authentication
-- ASP.NET Identity  
+## 🔐 Authentication & Authorization
+- ASP.NET Core Identity  
 - Roles: Anonymous / User / Admin  
+- Automatic role assignment for new users  
 
 ---
 
 # 🏗️ Architecture
 
-- Web (Controllers + Views)  
-- Services (Business logic)  
-- Data (EF Core)  
+The project follows a **layered architecture**:
+
+- **Web Layer** → Controllers + Views  
+- **Service Layer** → Business logic  
+- **Data Layer** → EF Core + Database  
 
 Flow:
 Controller → Service → Database → View
 
 ---
 
-# 👥 Roles
+# 👥 Access & Roles
 
-- Anonymous → browsing  
-- User → enroll  
-- Admin → manage  
+- **Anonymous users**
+  - Browse toys and courses  
+
+- **Registered users**
+  - Enroll in courses  
+  - Interact with user-only features  
+
+- **Admin**
+  - Manage toys (Create/Edit/Delete)  
+  - Manage orders  
+
+---
+### Admin
+Email: yoanna@admin.com  
+Password: Admin1 (default during development)
 
 ---
 
 # 🛠️ Tech stack
-- ASP.NET Core MVC  
-- EF Core  
-- SQL Server  
-- Identity  
+- ASP.NET Core MVC (.NET 8)  
+- Entity Framework Core  
+- SQL Server / LocalDB  
+- ASP.NET Core Identity  
+- Razor Views & Razor Pages  
 - Bootstrap  
 
 ---
@@ -89,25 +90,33 @@ Controller → Service → Database → View
 # ⚙️ Setup
 
 ```bash
+##1. Apply database migrations
 dotnet ef database update
+##2. Run the application
 dotnet run
 ```
 
 ---
 
 # 🧪 Testing
-Unit tests for services.
+Unit tests for service layer
+Integration tests for key flows
 
 ---
 
 # 🏆 Achievements
-- Layered architecture  
-- Role-based access  
-- CRUD + search + filtering  
+- Implemented clean layered architecture
+- Built role-based authorization system
+- Designed full CRUD + filtering + search flows
+- Integrated ASP.NET Identity with custom role logic
+- Implemented safe database seeding
+- Improved UI consistency and layout
 
 ---
 
 # 🔮 Future improvements
-- Cart  
-- Payments  
-- Better UI  
+- Shopping cart and checkout system
+- Payment integration
+- Owner-based toy management
+- UI/UX enhancements
+- Deployment and CI/CD pipeline 
