@@ -1,4 +1,5 @@
 using CrochetToysShop.Services.Core.Interfaces;
+using CrochetToysShop.Services.Models.Toys;
 using CrochetToysShop.Web.Infrastructure.Extensions;
 using CrochetToysShop.Web.ViewModels.Orders;
 using CrochetToysShop.Web.ViewModels.Toys;
@@ -48,6 +49,7 @@ namespace CrochetToysShop.Web.Controllers
 
             return View("Index", categoryModel);
         }
+
         [HttpGet]
         [Authorize(Roles = Roles.Admin)]
         public async Task<IActionResult> Create()
@@ -86,14 +88,27 @@ namespace CrochetToysShop.Web.Controllers
         [Route("Toys/Details/{id:int}")]
         public async Task<IActionResult> Details(int id)
         {
-            var toy = await toyService.GetDetailsAsync(id);
+            var toyDto = await toyService.GetDetailsAsync(id);
 
-            if (toy == null)
+            if (toyDto == null)
             {
                 return NotFound();
             }
 
-            return View(toy);
+            var model = new ToyDetailsViewModel
+            {
+                Id = toyDto.Id,
+                Name = toyDto.Name,
+                Description = toyDto.Description,
+                Price = toyDto.Price,
+                ImageUrl = toyDto.ImageUrl,
+                SizeCm = toyDto.SizeCm,
+                Difficulty = toyDto.Difficulty,
+                IsAvailable = toyDto.IsAvailable,
+                CategoryName = toyDto.CategoryName,
+            };
+
+            return View(model);
         }
 
         [HttpGet]

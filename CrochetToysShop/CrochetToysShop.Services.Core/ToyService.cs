@@ -1,6 +1,7 @@
 using CrochetToysShop.Data;
 using CrochetToysShop.Data.Models;
 using CrochetToysShop.Services.Core.Interfaces;
+using CrochetToysShop.Services.Models.Toys;
 using CrochetToysShop.Web.ViewModels.Toys;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Caching.Memory;
@@ -40,7 +41,6 @@ namespace CrochetToysShop.Services.Core
             var totalCount = await query.CountAsync();
             var totalPages = (int)Math.Ceiling((double)totalCount / pageSize);
 
-            // Ensure page is within valid range
             if (page < 1) page = 1;
             if (page > totalPages && totalPages > 0) page = totalPages;
 
@@ -83,15 +83,13 @@ namespace CrochetToysShop.Services.Core
                 .Include(t => t.Category)
                 .AsQueryable();
 
-            // Filter by search term (name or description)
             if (!string.IsNullOrWhiteSpace(searchTerm))
             {
                 var lowerSearchTerm = searchTerm.ToLower();
-                query = query.Where(t => t.Name.ToLower().Contains(lowerSearchTerm) || 
+                query = query.Where(t => t.Name.ToLower().Contains(lowerSearchTerm) ||
                                          t.Description.ToLower().Contains(lowerSearchTerm));
             }
 
-            // Filter by category
             if (categoryId.HasValue && categoryId.Value > 0)
             {
                 query = query.Where(t => t.CategoryId == categoryId.Value);
@@ -100,7 +98,6 @@ namespace CrochetToysShop.Services.Core
             var totalCount = await query.CountAsync();
             var totalPages = (int)Math.Ceiling((double)totalCount / pageSize);
 
-            // Ensure page is within valid range
             if (page < 1) page = 1;
             if (page > totalPages && totalPages > 0) page = totalPages;
 
@@ -165,13 +162,13 @@ namespace CrochetToysShop.Services.Core
             };
         }
 
-        public async Task<ToyDetailsViewModel?> GetDetailsAsync(int id)
+        public async Task<ToyDetailsDto?> GetDetailsAsync(int id)
         {
             return await db.Toys
                 .AsNoTracking()
                 .Include(t => t.Category)
                 .Where(t => t.Id == id)
-                .Select(t => new ToyDetailsViewModel
+                .Select(t => new ToyDetailsDto
                 {
                     Id = t.Id,
                     Name = t.Name,
@@ -347,5 +344,3 @@ namespace CrochetToysShop.Services.Core
         }
     }
 }
-
-

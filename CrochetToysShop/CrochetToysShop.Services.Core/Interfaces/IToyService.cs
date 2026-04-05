@@ -1,3 +1,4 @@
+using CrochetToysShop.Services.Models.Toys;
 using CrochetToysShop.Web.ViewModels.Toys;
 
 namespace CrochetToysShop.Services.Core.Interfaces
@@ -10,7 +11,7 @@ namespace CrochetToysShop.Services.Core.Interfaces
 
         Task<ToyIndexViewModel> GetByCategoryNameAsync(string categoryName);
 
-        Task<ToyDetailsViewModel?> GetDetailsAsync(int id);
+        Task<ToyDetailsDto?> GetDetailsAsync(int id);
 
         Task<ToyFormViewModel> GetCreateModelAsync();
 
