@@ -1,32 +1,23 @@
 namespace CrochetToysShop.Services.Tests
 {
-    using CrochetToysShop.Data;
-    using CrochetToysShop.Data.Models;
     using CrochetToysShop.Services.Core;
+    using CrochetToysShop.Services.Tests.Infrastructure;
+    using CrochetToysShop.Services.Tests.Infrastructure.Builders;
     using Microsoft.EntityFrameworkCore;
     using Xunit;
 
     public class ToyServiceTests
     {
-        private ApplicationDbContext CreateInMemoryDbContext()
-        {
-            var options = new DbContextOptionsBuilder<ApplicationDbContext>()
-                .UseInMemoryDatabase(databaseName: Guid.NewGuid().ToString())
-                .Options;
-
-            return new ApplicationDbContext(options);
-        }
-
         [Fact]
         public async Task GetAllAsync_WithNoFilter_ReturnsAllToys()
         {
             // Arrange
-            using (var context = CreateInMemoryDbContext())
+            using (var context = TestDbContextFactory.Create())
             {
-                var category = new Category { Id = 1, Name = "Flowers" };
+                var category = new CategoryBuilder().WithId(1).WithName("Flowers").Build();
                 context.Categories.Add(category);
-                context.Toys.Add(new Toy { Id = 1, Name = "Rose", CategoryId = 1, Price = 10.00m, IsAvailable = true });
-                context.Toys.Add(new Toy { Id = 2, Name = "Tulip", CategoryId = 1, Price = 12.00m, IsAvailable = true });
+                context.Toys.Add(new ToyBuilder().WithId(1).WithName("Rose").WithCategoryId(1).WithPrice(10.00m).WithIsAvailable(true).Build());
+                context.Toys.Add(new ToyBuilder().WithId(2).WithName("Tulip").WithCategoryId(1).WithPrice(12.00m).WithIsAvailable(true).Build());
                 context.SaveChanges();
 
                 var service = new ToyService(context);
@@ -44,12 +35,12 @@ namespace CrochetToysShop.Services.Tests
         public async Task GetAllAsync_WithCategoryFilter_ReturnsFilturedToys()
         {
             // Arrange
-            using (var context = CreateInMemoryDbContext())
+            using (var context = TestDbContextFactory.Create())
             {
-                context.Categories.Add(new Category { Id = 1, Name = "Flowers" });
-                context.Categories.Add(new Category { Id = 2, Name = "Animals" });
-                context.Toys.Add(new Toy { Id = 1, Name = "Rose", CategoryId = 1, Price = 10.00m, IsAvailable = true });
-                context.Toys.Add(new Toy { Id = 2, Name = "Dog", CategoryId = 2, Price = 15.00m, IsAvailable = true });
+                context.Categories.Add(new CategoryBuilder().WithId(1).WithName("Flowers").Build());
+                context.Categories.Add(new CategoryBuilder().WithId(2).WithName("Animals").Build());
+                context.Toys.Add(new ToyBuilder().WithId(1).WithName("Rose").WithCategoryId(1).WithPrice(10.00m).WithIsAvailable(true).Build());
+                context.Toys.Add(new ToyBuilder().WithId(2).WithName("Dog").WithCategoryId(2).WithPrice(15.00m).WithIsAvailable(true).Build());
                 context.SaveChanges();
 
                 var service = new ToyService(context);
@@ -68,20 +59,20 @@ namespace CrochetToysShop.Services.Tests
         public async Task GetAllAsync_WithPagination_ReturnsPaginatedResults()
         {
             // Arrange
-            using (var context = CreateInMemoryDbContext())
+            using (var context = TestDbContextFactory.Create())
             {
-                var category = new Category { Id = 1, Name = "General" };
+                var category = new CategoryBuilder().WithId(1).WithName("General").Build();
                 context.Categories.Add(category);
                 for (int i = 1; i <= 25; i++)
                 {
-                    context.Toys.Add(new Toy
-                    {
-                        Id = i,
-                        Name = $"Toy{i}",
-                        CategoryId = 1,
-                        Price = 10.00m + i,
-                        IsAvailable = true
-                    });
+                    context.Toys.Add(
+                        new ToyBuilder()
+                            .WithId(i)
+                            .WithName($"Toy{i}")
+                            .WithCategoryId(1)
+                            .WithPrice(10.00m + i)
+                            .WithIsAvailable(true)
+                            .Build());
                 }
                 context.SaveChanges();
 
@@ -103,21 +94,18 @@ namespace CrochetToysShop.Services.Tests
         public async Task GetDetailsAsync_WithValidId_ReturnsCorrectToy()
         {
             // Arrange
-            using (var context = CreateInMemoryDbContext())
+            using (var context = TestDbContextFactory.Create())
             {
-                var category = new Category { Id = 1, Name = "Flowers" };
+                var category = new CategoryBuilder().WithId(1).WithName("Flowers").Build();
                 context.Categories.Add(category);
-                var toy = new Toy
-                {
-                    Id = 1,
-                    Name = "Rose",
-                    Description = "Beautiful red rose",
-                    CategoryId = 1,
-                    Price = 10.00m,
-                    IsAvailable = true,
-                    SizeCm = 15,
-                    Difficulty = "Easy"
-                };
+                var toy = new ToyBuilder()
+                    .WithId(1)
+                    .WithName("Rose")
+                    .WithDescription("Beautiful red rose")
+                    .WithCategoryId(1)
+                    .WithPrice(10.00m)
+                    .WithIsAvailable(true)
+                    .Build();
                 context.Toys.Add(toy);
                 context.SaveChanges();
 
@@ -137,7 +125,7 @@ namespace CrochetToysShop.Services.Tests
         public async Task GetDetailsAsync_WithInvalidId_ReturnsNull()
         {
             // Arrange
-            using (var context = CreateInMemoryDbContext())
+            using (var context = TestDbContextFactory.Create())
             {
                 var service = new ToyService(context);
 
@@ -153,9 +141,9 @@ namespace CrochetToysShop.Services.Tests
         public async Task CreateAsync_WithValidData_CreatesToy()
         {
             // Arrange
-            using (var context = CreateInMemoryDbContext())
+            using (var context = TestDbContextFactory.Create())
             {
-                var category = new Category { Id = 1, Name = "Flowers" };
+                var category = new CategoryBuilder().WithId(1).WithName("Flowers").Build();
                 context.Categories.Add(category);
                 context.SaveChanges();
 
@@ -185,19 +173,18 @@ namespace CrochetToysShop.Services.Tests
         public async Task EditAsync_WithValidData_UpdatesToy()
         {
             // Arrange
-            using (var context = CreateInMemoryDbContext())
+            using (var context = TestDbContextFactory.Create())
             {
-                var category = new Category { Id = 1, Name = "Flowers" };
+                var category = new CategoryBuilder().WithId(1).WithName("Flowers").Build();
                 context.Categories.Add(category);
-                var toy = new Toy
-                {
-                    Id = 1,
-                    Name = "Old Name",
-                    CategoryId = 1,
-                    Price = 10.00m,
-                    IsAvailable = true,
-                    CreatedByUserId = "user123"
-                };
+                var toy = new ToyBuilder()
+                    .WithId(1)
+                    .WithName("Old Name")
+                    .WithCategoryId(1)
+                    .WithPrice(10.00m)
+                    .WithIsAvailable(true)
+                    .WithCreatedByUserId("user123")
+                    .Build();
                 context.Toys.Add(toy);
                 context.SaveChanges();
 
@@ -227,15 +214,15 @@ namespace CrochetToysShop.Services.Tests
         public async Task EditAsync_WithUnauthorizedUser_ReturnsFalse()
         {
             // Arrange
-            using (var context = CreateInMemoryDbContext())
+            using (var context = TestDbContextFactory.Create())
             {
-                var toy = new Toy
-                {
-                    Id = 1,
-                    Name = "Old Name",
-                    CategoryId = 1,
-                    CreatedByUserId = "otherUser"
-                };
+                context.Categories.Add(new CategoryBuilder().WithId(1).WithName("Flowers").Build());
+                var toy = new ToyBuilder()
+                    .WithId(1)
+                    .WithName("Old Name")
+                    .WithCategoryId(1)
+                    .WithCreatedByUserId("otherUser")
+                    .Build();
                 context.Toys.Add(toy);
                 context.SaveChanges();
 
@@ -259,15 +246,15 @@ namespace CrochetToysShop.Services.Tests
         public async Task DeleteAsync_WithValidOwnership_DeletesToy()
         {
             // Arrange
-            using (var context = CreateInMemoryDbContext())
+            using (var context = TestDbContextFactory.Create())
             {
-                var toy = new Toy
-                {
-                    Id = 1,
-                    Name = "Rose",
-                    CategoryId = 1,
-                    CreatedByUserId = "user123"
-                };
+                context.Categories.Add(new CategoryBuilder().WithId(1).WithName("Flowers").Build());
+                var toy = new ToyBuilder()
+                    .WithId(1)
+                    .WithName("Rose")
+                    .WithCategoryId(1)
+                    .WithCreatedByUserId("user123")
+                    .Build();
                 context.Toys.Add(toy);
                 context.SaveChanges();
 
@@ -287,7 +274,7 @@ namespace CrochetToysShop.Services.Tests
         public async Task DeleteAsync_WithNonexistentToy_ReturnsFalse()
         {
             // Arrange
-            using (var context = CreateInMemoryDbContext())
+            using (var context = TestDbContextFactory.Create())
             {
                 var service = new ToyService(context);
 
@@ -297,6 +284,225 @@ namespace CrochetToysShop.Services.Tests
                 // Assert
                 Assert.False(result);
             }
+        }
+
+        [Fact]
+        public async Task EditAsync_AllowsAdmin()
+        {
+            // Arrange
+            using var context = TestDbContextFactory.Create();
+
+            context.Categories.Add(new CategoryBuilder().WithId(1).WithName("Flowers").Build());
+            context.Toys.Add(
+                new ToyBuilder()
+                    .WithId(1)
+                    .WithName("Rose")
+                    .WithCategoryId(1)
+                    .WithCreatedByUserId("owner-1")
+                    .Build());
+            context.SaveChanges();
+
+            var service = new ToyService(context);
+            var model = new CrochetToysShop.Web.ViewModels.Toys.ToyFormViewModel
+            {
+                Name = "Edited By Admin",
+                Description = "Updated by admin with valid description text.",
+                CategoryId = 1,
+                Price = 22.50m,
+                SizeCm = 21,
+                Difficulty = "Medium",
+                IsAvailable = true
+            };
+
+            // Act
+            var result = await service.EditAsync(1, model, userId: "not-owner", isAdmin: true);
+
+            // Assert
+            Assert.True(result);
+            var updatedToy = await context.Toys.FindAsync(1);
+            Assert.NotNull(updatedToy);
+            Assert.Equal("Edited By Admin", updatedToy.Name);
+        }
+
+        [Fact]
+        public async Task EditAsync_AllowsOwner()
+        {
+            // Arrange
+            using var context = TestDbContextFactory.Create();
+
+            context.Categories.Add(new CategoryBuilder().WithId(1).WithName("Flowers").Build());
+            context.Toys.Add(
+                new ToyBuilder()
+                    .WithId(1)
+                    .WithName("Rose")
+                    .WithCategoryId(1)
+                    .WithCreatedByUserId("owner-1")
+                    .Build());
+            context.SaveChanges();
+
+            var service = new ToyService(context);
+            var model = new CrochetToysShop.Web.ViewModels.Toys.ToyFormViewModel
+            {
+                Name = "Edited By Owner",
+                Description = "Updated by owner with valid description text.",
+                CategoryId = 1,
+                Price = 25.00m,
+                SizeCm = 23,
+                Difficulty = "Hard",
+                IsAvailable = false
+            };
+
+            // Act
+            var result = await service.EditAsync(1, model, userId: "owner-1", isAdmin: false);
+
+            // Assert
+            Assert.True(result);
+            var updatedToy = await context.Toys.FindAsync(1);
+            Assert.NotNull(updatedToy);
+            Assert.Equal("Edited By Owner", updatedToy.Name);
+        }
+
+        [Fact]
+        public async Task EditAsync_DeniesNonOwner()
+        {
+            // Arrange
+            using var context = TestDbContextFactory.Create();
+
+            context.Categories.Add(new CategoryBuilder().WithId(1).WithName("Flowers").Build());
+            context.Toys.Add(
+                new ToyBuilder()
+                    .WithId(1)
+                    .WithName("Rose")
+                    .WithCategoryId(1)
+                    .WithCreatedByUserId("owner-1")
+                    .Build());
+            context.SaveChanges();
+
+            var service = new ToyService(context);
+            var model = new CrochetToysShop.Web.ViewModels.Toys.ToyFormViewModel
+            {
+                Name = "Should Not Update",
+                Description = "Non-owner tries to update with valid description.",
+                CategoryId = 1,
+                Price = 30.00m,
+                SizeCm = 25,
+                Difficulty = "Easy",
+                IsAvailable = true
+            };
+
+            // Act
+            var result = await service.EditAsync(1, model, userId: "other-user", isAdmin: false);
+
+            // Assert
+            Assert.False(result);
+            var originalToy = await context.Toys.FindAsync(1);
+            Assert.NotNull(originalToy);
+            Assert.Equal("Rose", originalToy.Name);
+        }
+
+        [Fact]
+        public async Task EditAsync_WithMissingToy_ReturnsFalse()
+        {
+            // Arrange
+            using var context = TestDbContextFactory.Create();
+            var service = new ToyService(context);
+            var model = new CrochetToysShop.Web.ViewModels.Toys.ToyFormViewModel
+            {
+                Name = "Missing",
+                Description = "Trying to edit missing toy with valid description.",
+                CategoryId = 1,
+                Price = 10.00m,
+                SizeCm = 10,
+                Difficulty = "Easy",
+                IsAvailable = true
+            };
+
+            // Act
+            var result = await service.EditAsync(999, model, userId: "owner-1", isAdmin: false);
+
+            // Assert
+            Assert.False(result);
+        }
+
+        [Fact]
+        public async Task DeleteAsync_AllowsAdmin()
+        {
+            // Arrange
+            using var context = TestDbContextFactory.Create();
+
+            context.Categories.Add(new CategoryBuilder().WithId(1).WithName("Flowers").Build());
+            context.Toys.Add(
+                new ToyBuilder()
+                    .WithId(1)
+                    .WithName("Rose")
+                    .WithCategoryId(1)
+                    .WithCreatedByUserId("owner-1")
+                    .Build());
+            context.SaveChanges();
+
+            var service = new ToyService(context);
+
+            // Act
+            var result = await service.DeleteAsync(1, userId: "not-owner", isAdmin: true);
+
+            // Assert
+            Assert.True(result);
+            var deletedToy = await context.Toys.FindAsync(1);
+            Assert.Null(deletedToy);
+        }
+
+        [Fact]
+        public async Task DeleteAsync_AllowsOwner()
+        {
+            // Arrange
+            using var context = TestDbContextFactory.Create();
+
+            context.Categories.Add(new CategoryBuilder().WithId(1).WithName("Flowers").Build());
+            context.Toys.Add(
+                new ToyBuilder()
+                    .WithId(1)
+                    .WithName("Rose")
+                    .WithCategoryId(1)
+                    .WithCreatedByUserId("owner-1")
+                    .Build());
+            context.SaveChanges();
+
+            var service = new ToyService(context);
+
+            // Act
+            var result = await service.DeleteAsync(1, userId: "owner-1", isAdmin: false);
+
+            // Assert
+            Assert.True(result);
+            var deletedToy = await context.Toys.FindAsync(1);
+            Assert.Null(deletedToy);
+        }
+
+        [Fact]
+        public async Task DeleteAsync_DeniesNonOwner()
+        {
+            // Arrange
+            using var context = TestDbContextFactory.Create();
+
+            context.Categories.Add(new CategoryBuilder().WithId(1).WithName("Flowers").Build());
+            context.Toys.Add(
+                new ToyBuilder()
+                    .WithId(1)
+                    .WithName("Rose")
+                    .WithCategoryId(1)
+                    .WithCreatedByUserId("owner-1")
+                    .Build());
+            context.SaveChanges();
+
+            var service = new ToyService(context);
+
+            // Act
+            var result = await service.DeleteAsync(1, userId: "other-user", isAdmin: false);
+
+            // Assert
+            Assert.False(result);
+            var existingToy = await context.Toys.FindAsync(1);
+            Assert.NotNull(existingToy);
         }
     }
 }

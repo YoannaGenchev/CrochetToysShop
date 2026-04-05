@@ -11,10 +11,17 @@ namespace CrochetToysShop.Services.Core
     public class OrderService : IOrderService
     {
         private readonly ApplicationDbContext db;
+        private readonly INotificationService notificationService;
 
         public OrderService(ApplicationDbContext db)
+            : this(db, new NullNotificationService())
+        {
+        }
+
+        public OrderService(ApplicationDbContext db, INotificationService notificationService)
         {
             this.db = db;
+            this.notificationService = notificationService;
         }
 
         public async Task<OrderIndexViewModel> GetAllForAdminAsync(int page = 1, int pageSize = 10)
@@ -102,17 +109,20 @@ namespace CrochetToysShop.Services.Core
                 return (false, ApplicationConstants.ErrorMessages.ToyNotAvailable, toy.Id);
             }
 
-            await db.Orders.AddAsync(new Order
+            var order = new Order
             {
                 CustomerName = model.CustomerName,
                 PhoneNumber = model.PhoneNumber,
                 Address = model.Address,
                 ToyId = toy.Id,
                 Status = OrderStatus.New,
-            });
+            };
+
+            await db.Orders.AddAsync(order);
 
             toy.IsAvailable = false;
             await db.SaveChangesAsync();
+            await notificationService.NotifyOrderCreatedAsync(order.Id, toy.Id, order.CustomerName);
 
             return (true, null, toy.Id);
         }

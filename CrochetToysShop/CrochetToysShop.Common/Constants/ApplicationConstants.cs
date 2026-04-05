@@ -16,17 +16,17 @@ namespace CrochetToysShop.Common.Constants
 
         public static class SuccessMessages
         {
-            public const string ToyCreated = "Играчката е добавена успешно.";
-            public const string ToyEdited = "Промените са запазени успешно.";
-            public const string ToyDeleted = "Играчката е изтрита успешно.";
-            public const string OrderCreated = "Поръчката е изпратена успешно!";
-            public const string OrderMarkedCompleted = "Поръчката е маркирана като изпълнена.";
+            public const string ToyCreated = "Toy created successfully.";
+            public const string ToyEdited = "Changes saved successfully.";
+            public const string ToyDeleted = "Toy deleted successfully.";
+            public const string OrderCreated = "Order request submitted successfully!";
+            public const string OrderMarkedCompleted = "Order marked as completed.";
         }
 
         public static class ErrorMessages
         {
-            public const string ToyNotFound = "Играчката не е намерена.";
-            public const string ToyNotAvailable = "Тази играчка вече е изчерпана.";
+            public const string ToyNotFound = "Toy not found.";
+            public const string ToyNotAvailable = "This toy is out of stock.";
             public const string MissingDefaultConnectionString = "Connection string 'DefaultConnection' not found.";
         }
 

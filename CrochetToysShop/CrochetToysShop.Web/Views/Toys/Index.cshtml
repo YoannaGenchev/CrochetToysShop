@@ -2,6 +2,7 @@
 
 @{
     ViewData["Title"] = "Toys";
+    var easterCategoryId = Model.Categories.FirstOrDefault(c => c.Name == "Easter")?.Id;
 }
 
 <div class="d-flex flex-wrap gap-3 align-items-center justify-content-between toys-page-header">
@@ -15,7 +16,7 @@
 
 <div class="row g-2 align-items-stretch toys-toolbar">
     <div class="col-12 col-lg-3">
-        <a asp-action="Index" asp-route-categoryId="6" class="btn btn-warning w-100 toys-toolbar-btn">🌸 Easter Collection</a>
+        <a asp-action="Index" asp-route-categoryId="@easterCategoryId" class="btn btn-warning w-100 toys-toolbar-btn">🌸 Easter Collection</a>
     </div>
     <div class="col-12 col-lg-9">
         <form method="get" asp-action="Search" class="toys-search-form">
@@ -53,11 +54,11 @@ else
                 <div class="card h-100 toy-card">
                     @if (!string.IsNullOrWhiteSpace(toy.ImageUrl))
                     {
-                        <img class="card-img-top toy-card-img" src="@toy.ImageUrl" asp-append-version="true" alt="@toy.Name" />
+                        <img class="card-img-top toy-card-img" src="@toy.ImageUrl" asp-append-version="true" alt="@toy.Name" loading="lazy" decoding="async" />
                     }
                     else
                     {
-                        <img class="card-img-top toy-card-img" src="/images/toys/no-image.svg" asp-append-version="true" alt="@toy.Name" />
+                        <img class="card-img-top toy-card-img" src="/images/toys/no-image.svg" asp-append-version="true" alt="@toy.Name" loading="lazy" decoding="async" />
                     }
 
                     <div class="card-body toy-card-body">

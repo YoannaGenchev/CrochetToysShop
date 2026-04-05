@@ -15,8 +15,8 @@ namespace CrochetToysShop.Web.ViewModels.Toys
         [Range(typeof(decimal), "0.01", "100000")]
         public decimal Price { get; set; }
 
-        [Display(Name = "Снимка (път)")]
-        [RegularExpression(@"^/images/toys/.*\.(jpg|jpeg|png|webp)$", ErrorMessage = "Моля въведи път като /images/toys/име.jpg")]
+        [Display(Name = "Image (path)")]
+        [RegularExpression(@"^/images/toys/.*\.(jpg|jpeg|png|webp)$", ErrorMessage = "Please enter a path like /images/toys/name.jpg")]
         public string? ImageUrl { get; set; }
 
         [Range(1, 200)]
@@ -27,7 +27,7 @@ namespace CrochetToysShop.Web.ViewModels.Toys
 
         public bool IsAvailable { get; set; } = true;
 
-        [Display(Name = "Категория")]
+        [Display(Name = "Category")]
         [Range(1, int.MaxValue)]
         public int CategoryId { get; set; }
 

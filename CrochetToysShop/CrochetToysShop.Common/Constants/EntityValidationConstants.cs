@@ -20,7 +20,7 @@
             public const int DifficultyMaxLength = 20;
             public const string DefaultDifficulty = "Easy";
             public const string ImageUrlPattern = @"^/images/toys/.*\.(jpg|jpeg|png|webp)$";
-            public const string ImageUrlPatternErrorMessage = "Моля въведи път като /images/toys/име.jpg";
+            public const string ImageUrlPatternErrorMessage = "Please enter a path like /images/toys/name.jpg";
         }
 
         public static class Order

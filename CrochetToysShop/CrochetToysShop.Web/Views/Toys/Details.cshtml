@@ -1,7 +1,7 @@
 @model CrochetToysShop.Web.ViewModels.Toys.ToyDetailsViewModel
 
 @{
-    ViewData["Title"] = "Details";
+    ViewData["Title"] = $"Toy Details - {Model.Name}";
 }
 
 <h2 class="page-title mb-4">@Model.Name</h2>
@@ -10,11 +10,11 @@
     <div class="col-md-6">
         @if (!string.IsNullOrWhiteSpace(Model.ImageUrl))
         {
-            <img src="@Model.ImageUrl" asp-append-version="true" alt="@Model.Name" class="img-fluid rounded border toy-details-image" />
+            <img src="@Model.ImageUrl" asp-append-version="true" alt="@Model.Name" class="img-fluid rounded border toy-details-image" loading="lazy" decoding="async" />
         }
         else
         {
-            <img src="/images/toys/no-image.svg" asp-append-version="true" alt="@Model.Name" class="img-fluid rounded border toy-details-image" />
+            <img src="/images/toys/no-image.svg" asp-append-version="true" alt="@Model.Name" class="img-fluid rounded border toy-details-image" loading="lazy" decoding="async" />
         }
     </div>
 
@@ -53,7 +53,7 @@
             <a asp-action="Index" class="btn btn-secondary">Back</a>
             @if (Model.IsAvailable)
             {
-                <a asp-action="Order" asp-route-id="@Model.Id" class="btn btn-success">Order</a>
+                <a asp-action="Order" asp-route-id="@Model.Id" class="btn btn-success">Request Order</a>
             }
             @if (User.IsInRole(Roles.Admin))
             {

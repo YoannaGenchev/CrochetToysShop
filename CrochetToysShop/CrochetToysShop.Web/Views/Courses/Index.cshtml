@@ -5,6 +5,7 @@
 }
 
 <h2 class="mb-4">@ViewData["Title"]</h2>
+<p class="text-muted mb-4">Join guided crochet lessons. Each course card shows the course fee, level, duration, and current enrollment capacity so you can decide where to enroll.</p>
 
 <form method="get" asp-action="Index" class="mb-4">
     <div class="row g-2">
@@ -36,28 +37,29 @@ else
                 <div class="card h-100">
                     @if (!string.IsNullOrWhiteSpace(course.ImageUrl))
                     {
-                        <img class="card-img-top toy-card-img" src="@course.ImageUrl" asp-append-version="true" alt="@course.Name" />
+                        <img class="card-img-top toy-card-img" src="@course.ImageUrl" asp-append-version="true" alt="@course.Name" loading="lazy" decoding="async" />
                     }
                     else
                     {
-                        <img class="card-img-top toy-card-img" src="/images/toys/no-image.svg" asp-append-version="true" alt="@course.Name" />
+                        <img class="card-img-top toy-card-img" src="/images/toys/no-image.svg" asp-append-version="true" alt="@course.Name" loading="lazy" decoding="async" />
                     }
 
                     <div class="card-body">
                         <h5 class="card-title">@course.Name</h5>
                         <p class="card-text text-muted">
-                            <small>@course.DurationHours hours • @course.Difficulty</small>
+                            <small><strong>Duration:</strong> @course.DurationHours hours • <strong>Level:</strong> @course.Difficulty</small>
                         </p>
-                        <p class="card-text fw-bold">@course.Price.ToString("C")</p>
+                        <p class="card-text text-muted">Includes full course description, requirements, and enrollment action on the details page.</p>
+                        <p class="card-text fw-bold">Course fee: @course.Price.ToEuro()</p>
                         <p class="card-text">
-                            <small class="text-muted">@course.EnrolledCount / @course.MaxStudents enrolled</small>
+                            <small class="text-muted"><strong>Enrollment:</strong> @course.EnrolledCount / @course.MaxStudents spots taken</small>
                         </p>
                     </div>
                     <div class="card-footer bg-white border-0">
-                        <a asp-action="Details" asp-route-id="@course.Id" class="btn btn-outline-primary w-100">View Details</a>
+                        <a asp-action="Details" asp-route-id="@course.Id" class="btn btn-primary w-100">View & Enroll</a>
                     </div>
                 </div>
-     </div>
+      </div>
 }
 
 <!-- Pagination Controls -->

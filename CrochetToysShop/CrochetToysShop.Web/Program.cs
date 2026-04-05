@@ -35,6 +35,7 @@ builder.Services.AddScoped<IToyService, ToyService>();
 builder.Services.AddScoped<ICategoryService, CategoryService>();
 builder.Services.AddScoped<IOrderService, OrderService>();
 builder.Services.AddScoped<ICourseService, CourseService>();
+builder.Services.AddScoped<INotificationService, NullNotificationService>();
 builder.Services.AddMemoryCache();
 
 builder.Services.AddControllersWithViews(options =>

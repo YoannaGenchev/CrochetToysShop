@@ -1,34 +1,27 @@
 namespace CrochetToysShop.Services.Tests
 {
+    using CrochetToysShop.Common;
     using CrochetToysShop.Common.Constants;
-    using CrochetToysShop.Data;
-    using CrochetToysShop.Data.Models;
     using CrochetToysShop.Services.Core;
+    using CrochetToysShop.Services.Tests.Infrastructure;
+    using CrochetToysShop.Services.Tests.Infrastructure.Builders;
     using CrochetToysShop.Web.ViewModels.Orders;
     using Microsoft.EntityFrameworkCore;
     using Xunit;
 
     public class OrderServiceTests
     {
-        private ApplicationDbContext CreateInMemoryDbContext()
-        {
-            var options = new DbContextOptionsBuilder<ApplicationDbContext>()
-                .UseInMemoryDatabase(databaseName: Guid.NewGuid().ToString())
-                .Options;
-
-            return new ApplicationDbContext(options);
-        }
-
         [Fact]
         public async Task GetAllForAdminAsync_ReturnsAllOrders()
         {
             // Arrange
-            using (var context = CreateInMemoryDbContext())
+            using (var context = TestDbContextFactory.Create())
             {
-                var toy = new Toy { Id = 1, Name = "Rose" };
+                context.Categories.Add(new CategoryBuilder().WithId(1).WithName("Flowers").Build());
+                var toy = new ToyBuilder().WithId(1).WithName("Rose").WithCategoryId(1).Build();
                 context.Toys.Add(toy);
-                context.Orders.Add(new Order { Id = 1, CustomerName = "John", Status = "New", CreatedOn = DateTime.Now, ToyId = 1 });
-                context.Orders.Add(new Order { Id = 2, CustomerName = "Jane", Status = "Completed", CreatedOn = DateTime.Now, ToyId = 1 });
+                context.Orders.Add(new OrderBuilder().WithId(1).WithCustomerName("John").WithStatus("New").WithCreatedOn(DateTime.UtcNow).WithToyId(1).Build());
+                context.Orders.Add(new OrderBuilder().WithId(2).WithCustomerName("Jane").WithStatus("Completed").WithCreatedOn(DateTime.UtcNow).WithToyId(1).Build());
                 context.SaveChanges();
 
                 var service = new OrderService(context);
@@ -46,22 +39,23 @@ namespace CrochetToysShop.Services.Tests
         public async Task GetAllForAdminAsync_WithPagination_ReturnsPaginatedResults()
         {
             // Arrange
-            using (var context = CreateInMemoryDbContext())
+            using (var context = TestDbContextFactory.Create())
             {
-                var toy = new Toy { Id = 1, Name = "Rose" };
+                context.Categories.Add(new CategoryBuilder().WithId(1).WithName("Flowers").Build());
+                var toy = new ToyBuilder().WithId(1).WithName("Rose").WithCategoryId(1).Build();
                 context.Toys.Add(toy);
                 for (int i = 1; i <= 15; i++)
                 {
-                    context.Orders.Add(new Order
-                    {
-                        Id = i,
-                        CustomerName = $"Customer{i}",
-                        Status = "New",
-                        CreatedOn = DateTime.Now,
-                        ToyId = 1,
-                        PhoneNumber = "123456",
-                        Address = "Address"
-                    });
+                    context.Orders.Add(
+                        new OrderBuilder()
+                            .WithId(i)
+                            .WithCustomerName($"Customer{i}")
+                            .WithStatus("New")
+                            .WithCreatedOn(DateTime.UtcNow)
+                            .WithToyId(1)
+                            .WithPhoneNumber("123456")
+                            .WithAddress("Address")
+                            .Build());
                 }
                 context.SaveChanges();
 
@@ -83,9 +77,10 @@ namespace CrochetToysShop.Services.Tests
         public async Task GetOrderModelAsync_WithAvailableToy_ReturnsOrderModel()
         {
             // Arrange
-            using (var context = CreateInMemoryDbContext())
+            using (var context = TestDbContextFactory.Create())
             {
-                context.Toys.Add(new Toy { Id = 1, Name = "Rose", IsAvailable = true });
+                context.Categories.Add(new CategoryBuilder().WithId(1).WithName("Flowers").Build());
+                context.Toys.Add(new ToyBuilder().WithId(1).WithName("Rose").WithCategoryId(1).WithIsAvailable(true).Build());
                 context.SaveChanges();
 
                 var service = new OrderService(context);
@@ -104,9 +99,10 @@ namespace CrochetToysShop.Services.Tests
         public async Task GetOrderModelAsync_WithUnavailableToy_ReturnsNull()
         {
             // Arrange
-            using (var context = CreateInMemoryDbContext())
+            using (var context = TestDbContextFactory.Create())
             {
-                context.Toys.Add(new Toy { Id = 1, Name = "Rose", IsAvailable = false });
+                context.Categories.Add(new CategoryBuilder().WithId(1).WithName("Flowers").Build());
+                context.Toys.Add(new ToyBuilder().WithId(1).WithName("Rose").WithCategoryId(1).WithIsAvailable(false).Build());
                 context.SaveChanges();
 
                 var service = new OrderService(context);
@@ -123,9 +119,10 @@ namespace CrochetToysShop.Services.Tests
         public async Task CreateOrderAsync_WithAvailableToy_CreatesOrder()
         {
             // Arrange
-            using (var context = CreateInMemoryDbContext())
+            using (var context = TestDbContextFactory.Create())
             {
-                context.Toys.Add(new Toy { Id = 1, Name = "Rose", IsAvailable = true });
+                context.Categories.Add(new CategoryBuilder().WithId(1).WithName("Flowers").Build());
+                context.Toys.Add(new ToyBuilder().WithId(1).WithName("Rose").WithCategoryId(1).WithIsAvailable(true).Build());
                 context.SaveChanges();
 
                 var service = new OrderService(context);
@@ -153,9 +150,10 @@ namespace CrochetToysShop.Services.Tests
         public async Task CreateOrderAsync_WithUnavailableToy_ReturnsFalse()
         {
             // Arrange
-            using (var context = CreateInMemoryDbContext())
+            using (var context = TestDbContextFactory.Create())
             {
-                context.Toys.Add(new Toy { Id = 1, Name = "Rose", IsAvailable = false });
+                context.Categories.Add(new CategoryBuilder().WithId(1).WithName("Flowers").Build());
+                context.Toys.Add(new ToyBuilder().WithId(1).WithName("Rose").WithCategoryId(1).WithIsAvailable(false).Build());
                 context.SaveChanges();
 
                 var service = new OrderService(context);
@@ -181,7 +179,7 @@ namespace CrochetToysShop.Services.Tests
         public async Task CreateOrderAsync_WithNonexistentToy_ReturnsFalse()
         {
             // Arrange
-            using (var context = CreateInMemoryDbContext())
+            using (var context = TestDbContextFactory.Create())
             {
                 var service = new OrderService(context);
                 var model = new OrderCreateViewModel
@@ -206,11 +204,21 @@ namespace CrochetToysShop.Services.Tests
         public async Task MarkCompletedAsync_WithValidId_MarksOrderAsCompleted()
         {
             // Arrange
-            using (var context = CreateInMemoryDbContext())
+            using (var context = TestDbContextFactory.Create())
             {
-                var toy = new Toy { Id = 1, Name = "Rose" };
+                context.Categories.Add(new CategoryBuilder().WithId(1).WithName("Flowers").Build());
+                var toy = new ToyBuilder().WithId(1).WithName("Rose").WithCategoryId(1).Build();
                 context.Toys.Add(toy);
-                context.Orders.Add(new Order { Id = 1, Status = "New", CreatedOn = DateTime.Now, ToyId = 1, CustomerName = "John", PhoneNumber = "123", Address = "123" });
+                context.Orders.Add(
+                    new OrderBuilder()
+                        .WithId(1)
+                        .WithStatus("New")
+                        .WithCreatedOn(DateTime.UtcNow)
+                        .WithToyId(1)
+                        .WithCustomerName("John")
+                        .WithPhoneNumber("123")
+                        .WithAddress("123")
+                        .Build());
                 context.SaveChanges();
 
                 var service = new OrderService(context);
@@ -229,7 +237,7 @@ namespace CrochetToysShop.Services.Tests
         public async Task MarkCompletedAsync_WithNonexistentId_ReturnsFalse()
         {
             // Arrange
-            using (var context = CreateInMemoryDbContext())
+            using (var context = TestDbContextFactory.Create())
             {
                 var service = new OrderService(context);
 
@@ -239,6 +247,158 @@ namespace CrochetToysShop.Services.Tests
                 // Assert
                 Assert.False(result);
             }
+        }
+
+        [Fact]
+        public async Task CreateOrderAsync_WithAvailableToy_CreatesOrderSuccessfully()
+        {
+            // Arrange
+            using var context = TestDbContextFactory.Create();
+
+            context.Categories.Add(new CategoryBuilder().WithId(1).WithName("Flowers").Build());
+            context.Toys.Add(new ToyBuilder().WithId(1).WithName("Rose").WithCategoryId(1).WithIsAvailable(true).Build());
+            context.SaveChanges();
+
+            var service = new OrderService(context);
+            var model = new OrderCreateViewModel
+            {
+                ToyId = 1,
+                CustomerName = "John",
+                PhoneNumber = "123456",
+                Address = "123 Main St"
+            };
+
+            // Act
+            var (ok, error, toyId) = await service.CreateOrderAsync(model);
+
+            // Assert
+            Assert.True(ok);
+            Assert.Null(error);
+            Assert.Equal(1, toyId);
+            Assert.Single(context.Orders);
+            var createdOrder = await context.Orders.FirstAsync();
+            Assert.Equal(OrderStatus.New, createdOrder.Status);
+            Assert.Equal("John", createdOrder.CustomerName);
+        }
+
+        [Fact]
+        public async Task CreateOrderAsync_WithAvailableToy_MarksToyAsUnavailable()
+        {
+            // Arrange
+            using var context = TestDbContextFactory.Create();
+
+            context.Categories.Add(new CategoryBuilder().WithId(1).WithName("Flowers").Build());
+            context.Toys.Add(new ToyBuilder().WithId(1).WithName("Rose").WithCategoryId(1).WithIsAvailable(true).Build());
+            context.SaveChanges();
+
+            var service = new OrderService(context);
+            var model = new OrderCreateViewModel
+            {
+                ToyId = 1,
+                CustomerName = "John",
+                PhoneNumber = "123456",
+                Address = "123 Main St"
+            };
+
+            // Act
+            var (ok, _, _) = await service.CreateOrderAsync(model);
+
+            // Assert
+            Assert.True(ok);
+            var toy = await context.Toys.FindAsync(1);
+            Assert.NotNull(toy);
+            Assert.False(toy.IsAvailable);
+        }
+
+        [Fact]
+        public async Task CreateOrderAsync_WithMissingToy_ReturnsExpectedFailure()
+        {
+            // Arrange
+            using var context = TestDbContextFactory.Create();
+
+            var service = new OrderService(context);
+            var model = new OrderCreateViewModel
+            {
+                ToyId = 999,
+                CustomerName = "John",
+                PhoneNumber = "123456",
+                Address = "123 Main St"
+            };
+
+            // Act
+            var (ok, error, toyId) = await service.CreateOrderAsync(model);
+
+            // Assert
+            Assert.False(ok);
+            Assert.Equal(ApplicationConstants.ErrorMessages.ToyNotFound, error);
+            Assert.Equal(999, toyId);
+            Assert.Empty(context.Orders);
+        }
+
+        [Fact]
+        public async Task CreateOrderAsync_WithUnavailableToy_ReturnsExpectedFailure()
+        {
+            // Arrange
+            using var context = TestDbContextFactory.Create();
+
+            context.Categories.Add(new CategoryBuilder().WithId(1).WithName("Flowers").Build());
+            context.Toys.Add(new ToyBuilder().WithId(1).WithName("Rose").WithCategoryId(1).WithIsAvailable(false).Build());
+            context.SaveChanges();
+
+            var service = new OrderService(context);
+            var model = new OrderCreateViewModel
+            {
+                ToyId = 1,
+                CustomerName = "John",
+                PhoneNumber = "123456",
+                Address = "123 Main St"
+            };
+
+            // Act
+            var (ok, error, toyId) = await service.CreateOrderAsync(model);
+
+            // Assert
+            Assert.False(ok);
+            Assert.Equal(ApplicationConstants.ErrorMessages.ToyNotAvailable, error);
+            Assert.Equal(1, toyId);
+            Assert.Empty(context.Orders);
+        }
+
+        [Fact]
+        public async Task MarkCompletedAsync_WithExistingOrder_UpdatesStatusCorrectly()
+        {
+            // Arrange
+            using var context = TestDbContextFactory.Create();
+
+            context.Categories.Add(new CategoryBuilder().WithId(1).WithName("Flowers").Build());
+            context.Toys.Add(new ToyBuilder().WithId(1).WithName("Rose").WithCategoryId(1).Build());
+            context.Orders.Add(new OrderBuilder().WithId(1).WithToyId(1).WithStatus(OrderStatus.New).Build());
+            context.SaveChanges();
+
+            var service = new OrderService(context);
+
+            // Act
+            var ok = await service.MarkCompletedAsync(1);
+
+            // Assert
+            Assert.True(ok);
+            var updatedOrder = await context.Orders.FindAsync(1);
+            Assert.NotNull(updatedOrder);
+            Assert.Equal(OrderStatus.Completed, updatedOrder.Status);
+        }
+
+        [Fact]
+        public async Task MarkCompletedAsync_WithMissingOrder_ReturnsExpectedFailure()
+        {
+            // Arrange
+            using var context = TestDbContextFactory.Create();
+            var service = new OrderService(context);
+
+            // Act
+            var ok = await service.MarkCompletedAsync(404);
+
+            // Assert
+            Assert.False(ok);
         }
     }
 }

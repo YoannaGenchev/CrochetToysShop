@@ -1,17 +1,13 @@
 @model CrochetToysShop.Web.ViewModels.Orders.OrderCreateViewModel
 
 @{
-    ViewData["Title"] = "Order";
+    ViewData["Title"] = $"Order Request - {Model.ToyName ?? "Selected Toy"}";
 }
 
 <div asp-validation-summary="All" class="text-danger mb-3"></div>
 
-<h2 class="mb-4">Order: @Model.ToyName</h2>
-
-@if (TempData["SuccessMessage"] != null)
-{
-    <div class="alert alert-success">@TempData["SuccessMessage"]</div>
-}
+<h2 class="mb-2">Order Request: @Model.ToyName</h2>
+<p class="text-muted mb-4">Submit this form to request the selected handmade toy. This shop currently processes one toy per request.</p>
 
 <form asp-action="Order" method="post">
     <input type="hidden" asp-for="ToyId" />
@@ -34,7 +30,7 @@
         <span asp-validation-for="Address" class="text-danger"></span>
     </div>
 
-    <button type="submit" class="btn btn-success">Submit</button>
+    <button type="submit" class="btn btn-success">Submit Order Request</button>
     <a asp-action="Details" asp-route-id="@Model.ToyId" class="btn btn-secondary">Cancel</a>
 </form>
 
