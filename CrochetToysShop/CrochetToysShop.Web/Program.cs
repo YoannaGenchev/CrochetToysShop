@@ -16,21 +16,18 @@ builder.Services.AddDbContext<ApplicationDbContext>(options =>
 
 builder.Services.AddDatabaseDeveloperPageExceptionFilter();
 
-var identitySettings = builder.Configuration
-    .GetSection(IdentitySettings.SectionName)
-    .Get<IdentitySettings>() ?? new IdentitySettings();
-
 builder.Services.AddDefaultIdentity<IdentityUser>(options =>
 {
-    options.SignIn.RequireConfirmedAccount = identitySettings.SignIn.RequireConfirmedAccount;
-    options.Password.RequireDigit = identitySettings.Password.RequireDigit;
-    options.Password.RequireLowercase = identitySettings.Password.RequireLowercase;
-    options.Password.RequireUppercase = identitySettings.Password.RequireUppercase;
-    options.Password.RequireNonAlphanumeric = identitySettings.Password.RequireNonAlphanumeric;
-    options.Password.RequiredLength = identitySettings.Password.RequiredLength;
+    options.SignIn.RequireConfirmedAccount = false;
+
+    options.Password.RequireDigit = false;
+    options.Password.RequireLowercase = false;
+    options.Password.RequireUppercase = false;
+    options.Password.RequireNonAlphanumeric = false;
+    options.Password.RequiredLength = 3;
 })
-    .AddRoles<IdentityRole>()
-    .AddEntityFrameworkStores<ApplicationDbContext>();
+.AddRoles<IdentityRole>()
+.AddEntityFrameworkStores<ApplicationDbContext>();
 
 builder.Services.AddScoped<IToyService, ToyService>();
 builder.Services.AddScoped<ICategoryService, CategoryService>();
@@ -45,21 +42,14 @@ using (var scope = app.Services.CreateScope())
 {
     var db = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
 
-    if (!db.Database.GetPendingMigrations().Any())
+    try
     {
+        db.Database.Migrate();
         DbSeeder.Seed(scope, db);
     }
-    else
+    catch (Exception ex)
     {
-        try
-        {
-            db.Database.Migrate();
-            DbSeeder.Seed(scope, db);
-        }
-        catch (Exception ex)
-        {
-            Console.WriteLine($"Migration error: {ex.Message}");
-        }
+        Console.WriteLine($"Migration error: {ex.Message}");
     }
 }
 
