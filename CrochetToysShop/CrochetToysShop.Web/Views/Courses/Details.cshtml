@@ -53,7 +53,7 @@
             <a asp-action="Index" class="btn btn-secondary">Back to Courses</a>
             @if (User.Identity?.IsAuthenticated == true)
             {
-                @if (User.IsInRole("User"))
+                @if (User.IsInRole(Roles.User))
                 {
                     @if (Model.IsUserEnrolled)
                     {
