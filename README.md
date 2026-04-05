@@ -1,71 +1,113 @@
-﻿# 🧸 CrochetToysShop
+﻿# 🧶 CrochetToysShop — Handmade Toys Store Platform
 
-A web shop for handmade crochet toys, built with ASP.NET Core MVC. 
-Customers can browse the catalogue and place orders without registration. 
-Admins manage the products and track incoming orders.
+A web application for browsing, managing, and ordering handmade crochet toys, combined with a learning module for crochet courses — built with **ASP.NET Core MVC**, **Entity Framework Core**, and **ASP.NET Identity**.
 
----
-
-## 🔧 Requirements
-
-- .NET 8 SDK
-- Docker Desktop
-- Visual Studio 2022 or later
+The goal of the project is to simulate a real-world online store with **role-based access**, **structured data management**, and **user interaction flows**.
 
 ---
 
-## 🚀 How to Run
+# 📑 Contents
+- [Project at a glance](#-project-at-a-glance)
+- [Key features](#-key-features)
+- [Architecture](#-architecture)
+- [Access & Roles](#-access--roles)
+- [Database model](#-database-model)
+- [UI structure](#-ui-structure)
+- [Tech stack](#-tech-stack)
+- [Getting started](#-getting-started)
+- [EF Core migrations](#-ef-core-migrations)
+- [Testing](#-testing)
+- [My main achievements](#-my-main-achievements)
+- [What I learned](#-what-i-learned)
+- [Future improvements](#-future-improvements)
 
-### 1. Start the database
+---
 
-From the root folder (where `docker-compose.yml` is):
+# 🚀 Project at a glance
+
+**CrochetToysShop** is a simplified e-commerce and learning platform that allows users to:
+
+- 🧸 Browse crochet toys by category  
+- 🔎 Search and filter toys  
+- 🛒 Place toy orders  
+- 🎓 Enroll in crochet courses  
+- ⚙️ Manage content through an admin panel  
+
+---
+
+# ⭐ Key features
+
+## 🛍️ Toys
+- Full CRUD for administrators  
+- Public browsing  
+- Category filtering  
+- Search  
+- Availability tracking  
+
+## 📦 Orders
+- Place orders  
+- Admin manages orders  
+
+## 🎓 Courses
+- Browse courses  
+- User-only enrollment  
+
+## 🔐 Authentication
+- ASP.NET Identity  
+- Roles: Anonymous / User / Admin  
+
+---
+
+# 🏗️ Architecture
+
+- Web (Controllers + Views)  
+- Services (Business logic)  
+- Data (EF Core)  
+
+Flow:
+Controller → Service → Database → View
+
+---
+
+# 👥 Roles
+
+- Anonymous → browsing  
+- User → enroll  
+- Admin → manage  
+
+---
+
+# 🛠️ Tech stack
+- ASP.NET Core MVC  
+- EF Core  
+- SQL Server  
+- Identity  
+- Bootstrap  
+
+---
+
+# ⚙️ Setup
 
 ```bash
-docker-compose up -d
-```
-
-This starts SQL Server 2022 on port 1433. The password matches the one in `appsettings.json` — no changes needed.
-
-### 2. Run the app
-
-Open the solution in Visual Studio and press **F5**, or from the terminal:
-
-```bash
-cd CrochetToysShop
+dotnet ef database update
 dotnet run
 ```
 
-Migrations run automatically on startup. Categories and the admin account are seeded on first run — no manual setup needed.
+---
 
-### 3. Open in browser
-
-Go to `https://localhost:<port>` shown in the terminal or Visual Studio output.
+# 🧪 Testing
+Unit tests for services.
 
 ---
 
-## 🔑 Admin Account
-
-- **Email:** yoanna@admin.com  
-- **Password:** admin1
-
----
-
-## 🛠️ Tech Stack
-
-- ASP.NET Core 8 MVC
-- Entity Framework Core 8 + SQL Server
-- ASP.NET Core Identity
-- Bootstrap 5
+# 🏆 Achievements
+- Layered architecture  
+- Role-based access  
+- CRUD + search + filtering  
 
 ---
 
-## 📁 Structure
-
-```
-Controllers/   – request handling
-Services/      – business logic
-Data/          – DbContext and migrations
-Models/        – entities and view models
-Views/         – Razor pages
-wwwroot/       – CSS, JS, images
-```
+# 🔮 Future improvements
+- Cart  
+- Payments  
+- Better UI  
