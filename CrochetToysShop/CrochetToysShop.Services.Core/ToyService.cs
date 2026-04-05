@@ -142,15 +142,38 @@ namespace CrochetToysShop.Services.Core
 
         public async Task<ToyIndexViewModel> GetByCategoryNameAsync(string categoryName)
         {
-            var model = await GetAllAsync();
-            var filteredToys = model.Toys
-                .Where(t => t.CategoryName.Equals(categoryName, StringComparison.OrdinalIgnoreCase))
-                .ToList();
+            var normalizedCategoryName = categoryName.Trim().ToLower();
+
+            var filteredToys = await db.Toys
+                .AsNoTracking()
+                .Include(t => t.Category)
+                .Where(t => t.Category.Name.ToLower() == normalizedCategoryName)
+                .OrderBy(t => t.Name)
+                .Select(t => new ToyListItemViewModel
+                {
+                    Id = t.Id,
+                    Name = t.Name,
+                    Price = t.Price,
+                    ImageUrl = t.ImageUrl,
+                    CategoryName = t.Category.Name,
+                    IsAvailable = t.IsAvailable,
+                })
+                .ToListAsync();
+
+            var categories = await db.Categories
+                .AsNoTracking()
+                .OrderBy(c => c.Name)
+                .Select(c => new CategoryDropdownViewModel
+                {
+                    Id = c.Id,
+                    Name = c.Name
+                })
+                .ToListAsync();
 
             return new ToyIndexViewModel
             {
                 Toys = filteredToys,
-                Categories = model.Categories
+                Categories = categories
             };
         }
 
