@@ -4,11 +4,18 @@
     ViewData["Title"] = "Details";
 }
 
-<h2 class="mb-4">@Model.Name</h2>
+<h2 class="page-title mb-4">@Model.Name</h2>
 
-<div class="row g-4 mb-5">
+<div class="row g-4 mb-5 toy-details-section">
     <div class="col-md-6">
-        <img src="@(string.IsNullOrWhiteSpace(Model.ImageUrl) ? "/images/toys/no-image.svg" : Model.ImageUrl)" asp-append-version="true" alt="@Model.Name" class="img-fluid rounded border" style="width: 100%; object-fit: contain; background-color: #f8f9fa;" />
+        @if (!string.IsNullOrWhiteSpace(Model.ImageUrl))
+        {
+            <img src="@Model.ImageUrl" asp-append-version="true" alt="@Model.Name" class="img-fluid rounded border toy-details-image" />
+        }
+        else
+        {
+            <img src="/images/toys/no-image.svg" asp-append-version="true" alt="@Model.Name" class="img-fluid rounded border toy-details-image" />
+        }
     </div>
 
     <div class="col-md-6">
@@ -42,7 +49,7 @@
 
         <p class="text-muted">@Model.Description</p>
 
-        <div class="mt-4 d-flex flex-wrap gap-2">
+        <div class="mt-4 d-flex flex-wrap gap-2 toy-details-actions">
             <a asp-action="Index" class="btn btn-secondary">Back</a>
             @if (Model.IsAvailable)
             {

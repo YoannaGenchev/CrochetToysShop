@@ -4,25 +4,26 @@
     ViewData["Title"] = "Toys";
 }
 
-<h2 class="mb-4">@ViewData["Title"]</h2>
+<div class="d-flex flex-wrap gap-3 align-items-center justify-content-between toys-page-header">
+    <h2 class="page-title toys-page-title">@ViewData["Title"]</h2>
 
-@if (User.IsInRole(Roles.Admin))
-{
-    <a asp-action="Create" class="btn btn-primary mb-3">+ Add toy</a>
-}
+    @if (User.IsInRole(Roles.Admin))
+    {
+        <a asp-action="Create" class="btn btn-primary">+ Add toy</a>
+    }
+</div>
 
-<!-- Quick Links & Search -->
-<div class="row mb-4">
-    <div class="col-md-3">
-        <a asp-action="Index" asp-route-categoryId="6" class="btn btn-warning w-100">🌸 Easter Collection</a>
+<div class="row g-2 align-items-stretch toys-toolbar">
+    <div class="col-12 col-lg-3">
+        <a asp-action="Index" asp-route-categoryId="6" class="btn btn-warning w-100 toys-toolbar-btn">🌸 Easter Collection</a>
     </div>
-    <div class="col-md-9">
-        <form method="get" asp-action="Search">
-            <div class="row g-2">
-                <div class="col-md-8">
+    <div class="col-12 col-lg-9">
+        <form method="get" asp-action="Search" class="toys-search-form">
+            <div class="row g-2 align-items-stretch">
+                <div class="col-12 col-md-7">
                     <input type="text" name="q" class="form-control" placeholder="Search toys by name or description..." value="@ViewBag.SearchQuery" />
                 </div>
-                <div class="col-md-3">
+                <div class="col-12 col-md-3">
                     <select name="categoryId" class="form-select">
                         <option value="">All categories</option>
                         @foreach (var category in Model.Categories)
@@ -31,8 +32,8 @@
                         }
                     </select>
                 </div>
-                <div class="col-md-1">
-                    <button type="submit" class="btn btn-primary w-100">🔍</button>
+                <div class="col-12 col-md-2">
+                    <button type="submit" class="btn btn-primary w-100 toys-toolbar-btn">🔍</button>
                 </div>
             </div>
         </form>
@@ -45,11 +46,11 @@
 }
 else
 {
-    <div class="row">
+    <div class="row g-4 toys-grid toys-cards-section">
         @foreach (var toy in Model.Toys)
         {
-            <div class="col-md-4 mb-4">
-                <div class="card h-100">
+            <div class="col-md-4 d-flex">
+                <div class="card h-100 toy-card">
                     @if (!string.IsNullOrWhiteSpace(toy.ImageUrl))
                     {
                         <img class="card-img-top toy-card-img" src="@toy.ImageUrl" asp-append-version="true" alt="@toy.Name" />
@@ -59,63 +60,62 @@ else
                         <img class="card-img-top toy-card-img" src="/images/toys/no-image.svg" asp-append-version="true" alt="@toy.Name" />
                     }
 
-                    <div class="card-body">
+                    <div class="card-body toy-card-body">
                         <h5 class="card-title">@toy.Name</h5>
                         <p class="card-text"><span class="badge bg-secondary">@toy.CategoryName</span></p>
                         <span class="badge @(toy.IsAvailable ? "bg-success" : "bg-danger")">@(toy.IsAvailable ? ApplicationConstants.UILabels.Available : ApplicationConstants.UILabels.OutOfStock)</span>
-                        <p class="card-text fw-bold">@toy.Price.ToEuro()</p>
+                        <p class="card-text fw-bold toy-card-price">@toy.Price.ToEuro()</p>
                     </div>
-                    <div class="card-footer bg-white border-0">
-                        <a asp-controller="Toys" asp-action="Details" asp-route-id="@toy.Id" class="btn btn-outline-primary w-100">Details</a>
+                    <div class="card-footer bg-white border-0 toy-card-footer">
+                        <a asp-controller="Toys" asp-action="Details" asp-route-id="@toy.Id" class="btn btn-outline-primary w-100 toy-card-btn">Details</a>
 
                         @if (User.IsInRole(Roles.Admin))
                         {
-                            <div class="mt-2 d-flex gap-2">
-                                <a asp-action="Edit" asp-route-id="@toy.Id" class="btn btn-warning w-50">Edit</a>
-                                <a asp-action="Delete" asp-route-id="@toy.Id" class="btn btn-danger w-50">Delete</a>
-     </div>
-}
-
-<!-- Pagination Controls -->
-@if (Model.Pagination.TotalPages > 1)
-{
-    <nav aria-label="Page navigation" class="mt-4">
-        <ul class="pagination justify-content-center">
-            @if (Model.Pagination.HasPreviousPage)
-            {
-                <li class="page-item">
-                    <a class="page-link" asp-action="Index" asp-route-categoryId="@Model.CategoryId" asp-route-page="1">First</a>
-                </li>
-                <li class="page-item">
-                    <a class="page-link" asp-action="Index" asp-route-categoryId="@Model.CategoryId" asp-route-page="@(Model.Pagination.CurrentPage - 1)">Previous</a>
-                </li>
-            }
-
-            @foreach (var pageNumber in Model.Pagination.PageNumbers)
-            {
-                <li class="page-item @(pageNumber == Model.Pagination.CurrentPage ? "active" : "")">
-                    <a class="page-link" asp-action="Index" asp-route-categoryId="@Model.CategoryId" asp-route-page="@pageNumber">@pageNumber</a>
-                </li>
-            }
-
-            @if (Model.Pagination.HasNextPage)
-            {
-                <li class="page-item">
-                    <a class="page-link" asp-action="Index" asp-route-categoryId="@Model.CategoryId" asp-route-page="@(Model.Pagination.CurrentPage + 1)">Next</a>
-                </li>
-                <li class="page-item">
-                    <a class="page-link" asp-action="Index" asp-route-categoryId="@Model.CategoryId" asp-route-page="@Model.Pagination.TotalPages">Last</a>
-                </li>
-            }
-        </ul>
-    </nav>
-    <div class="text-center text-muted mt-2">
-        <small>Page @Model.Pagination.CurrentPage of @Model.Pagination.TotalPages (Total: @Model.Pagination.TotalCount items)</small>
-    </div>
-}
+                            <div class="mt-2 d-flex gap-2 toy-card-admin-actions">
+                                <a asp-action="Edit" asp-route-id="@toy.Id" class="btn btn-warning w-50 toy-card-btn">Edit</a>
+                                <a asp-action="Delete" asp-route-id="@toy.Id" class="btn btn-danger w-50 toy-card-btn">Delete</a>
+                            </div>
+                        }
                     </div>
                 </div>
             </div>
         }
     </div>
+
+    @if (Model.Pagination.TotalPages > 1)
+    {
+        <nav aria-label="Page navigation" class="mt-4">
+            <ul class="pagination justify-content-center">
+                @if (Model.Pagination.HasPreviousPage)
+                {
+                    <li class="page-item">
+                        <a class="page-link" asp-action="Index" asp-route-categoryId="@Model.CategoryId" asp-route-page="1">First</a>
+                    </li>
+                    <li class="page-item">
+                        <a class="page-link" asp-action="Index" asp-route-categoryId="@Model.CategoryId" asp-route-page="@(Model.Pagination.CurrentPage - 1)">Previous</a>
+                    </li>
+                }
+
+                @foreach (var pageNumber in Model.Pagination.PageNumbers)
+                {
+                    <li class="page-item @(pageNumber == Model.Pagination.CurrentPage ? "active" : "")">
+                        <a class="page-link" asp-action="Index" asp-route-categoryId="@Model.CategoryId" asp-route-page="@pageNumber">@pageNumber</a>
+                    </li>
+                }
+
+                @if (Model.Pagination.HasNextPage)
+                {
+                    <li class="page-item">
+                        <a class="page-link" asp-action="Index" asp-route-categoryId="@Model.CategoryId" asp-route-page="@(Model.Pagination.CurrentPage + 1)">Next</a>
+                    </li>
+                    <li class="page-item">
+                        <a class="page-link" asp-action="Index" asp-route-categoryId="@Model.CategoryId" asp-route-page="@Model.Pagination.TotalPages">Last</a>
+                    </li>
+                }
+            </ul>
+        </nav>
+        <div class="text-center text-muted mt-2">
+            <small>Page @Model.Pagination.CurrentPage of @Model.Pagination.TotalPages (Total: @Model.Pagination.TotalCount items)</small>
+        </div>
+    }
 }

@@ -20,7 +20,7 @@ namespace CrochetToysShop.Data.Models
         [Column(TypeName = "decimal(18,2)")]
         public decimal Price { get; set; }
 
-        [Url]
+        [RegularExpression(ImageUrlPattern, ErrorMessage = ImageUrlPatternErrorMessage)]
         public string? ImageUrl { get; set; }
 
         [Range(SizeMinCm, SizeMaxCm)]

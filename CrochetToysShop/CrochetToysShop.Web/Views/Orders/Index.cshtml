@@ -4,7 +4,7 @@
     ViewData["Title"] = "Orders";
 }
 
-<h2 class="mb-4">Orders</h2>
+<h2 class="page-title orders-page-title">Orders</h2>
 
 @if (!Model.Orders.Any())
 {
@@ -12,8 +12,9 @@
 }
 else
 {
-    <table class="table table-striped align-middle">
-        <thead>
+    <div class="table-responsive orders-table-wrap">
+    <table class="table table-striped align-middle orders-table">
+        <thead class="orders-table-head">
             <tr>
                 <th>#</th>
                 <th>Date</th>
@@ -22,7 +23,7 @@ else
                 <th>Customer</th>
                 <th>Phone</th>
                 <th>Address</th>
-                <th></th>
+                <th class="text-end">Actions</th>
             </tr>
         </thead>
         <tbody>
@@ -30,30 +31,30 @@ else
             {
                 <tr>
                     <td>@o.Id</td>
-                    <td>@o.CreatedOn.ToLocalTime().ToString("dd.MM.yyyy HH:mm")</td>
+                    <td class="text-nowrap">@o.CreatedOn.ToLocalTime().ToString("dd.MM.yyyy HH:mm")</td>
                     <td>
                         @if (o.Status == OrderStatus.Completed)
                         {
-                            <span class="badge bg-success">@OrderStatus.Completed</span>
+                            <span class="badge bg-success orders-status-badge">@OrderStatus.Completed</span>
                         }
                         else
                         {
-                            <span class="badge bg-warning text-dark">@OrderStatus.New</span>
+                            <span class="badge bg-warning text-dark orders-status-badge">@OrderStatus.New</span>
                         }
                     </td>
                     <td>
-                        <a asp-controller="Toys" asp-action="Details" asp-route-id="@o.ToyId">@o.ToyName</a>
+                        <a asp-controller="Toys" asp-action="Details" asp-route-id="@o.ToyId" class="orders-toy-link">@o.ToyName</a>
                     </td>
                     <td>@o.CustomerName</td>
-                    <td>@o.PhoneNumber</td>
+                    <td class="text-nowrap">@o.PhoneNumber</td>
                     <td>@o.Address</td>
                     <td class="text-end">
                         @if (o.Status != OrderStatus.Completed)
                         {
-                            <form asp-action="MarkCompleted" method="post" class="d-inline">
+                            <form asp-action="MarkCompleted" method="post" class="d-inline-block orders-action-form">
                                 @Html.AntiForgeryToken()
                                 <input type="hidden" name="id" value="@o.Id" />
-                                <button class="btn btn-sm btn-success">Mark completed</button>
+                                <button class="btn btn-sm btn-success orders-action-btn">Mark completed</button>
                             </form>
                         }
                     </td>
@@ -61,6 +62,7 @@ else
             }
         </tbody>
     </table>
+    </div>
 
     <!-- Pagination Controls -->
     @if (Model.Pagination.TotalPages > 1)
