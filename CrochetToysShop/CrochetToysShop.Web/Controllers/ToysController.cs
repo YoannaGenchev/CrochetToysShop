@@ -12,11 +12,13 @@ namespace CrochetToysShop.Web.Controllers
     {
         private readonly IToyService toyService;
         private readonly IOrderService orderService;
+        private readonly ILogger<ToysController> _logger;
 
-        public ToysController(IToyService toyService, IOrderService orderService)
+        public ToysController(IToyService toyService, IOrderService orderService, ILogger<ToysController> logger)
         {
             this.toyService = toyService;
             this.orderService = orderService;
+            _logger = logger;
         }
 
         public async Task<IActionResult> Index(int? categoryId, int page = 1)
@@ -67,7 +69,14 @@ namespace CrochetToysShop.Web.Controllers
             }
 
             var userId = User.GetUserId();
-            await toyService.CreateAsync(model, userId);
+            var createdToyId = await toyService.CreateAsync(model, userId);
+
+            _logger.LogInformation(
+                "Toy {ToyId} action {ActionName} by user {UserId} (IsAdmin: {IsAdmin})",
+                createdToyId,
+                nameof(Create),
+                userId,
+                User.IsInRole(Roles.Admin));
 
             TempData[TempDataKeys.SuccessMessage] = SuccessMessages.ToyCreated;
             return RedirectToAction(nameof(Index));
@@ -93,9 +102,16 @@ namespace CrochetToysShop.Web.Controllers
         public async Task<IActionResult> Edit(int id)
         {
             var userId = User.GetUserId();
-            var model = await toyService.GetEditModelAsync(id, userId);
+            var isAdmin = User.IsInRole(Roles.Admin);
+            var model = await toyService.GetEditModelAsync(id, userId, isAdmin);
             if (model == null)
             {
+                _logger.LogWarning(
+                    "Toy {ToyId} action {ActionName} denied for user {UserId} (IsAdmin: {IsAdmin})",
+                    id,
+                    nameof(Edit),
+                    userId,
+                    isAdmin);
                 return Forbid();
             }
 
@@ -109,12 +125,19 @@ namespace CrochetToysShop.Web.Controllers
         public async Task<IActionResult> Edit(int id, ToyFormViewModel model)
         {
             var userId = User.GetUserId();
+            var isAdmin = User.IsInRole(Roles.Admin);
 
             if (!ModelState.IsValid)
             {
-                var formModel = await toyService.GetEditModelAsync(id, userId);
+                var formModel = await toyService.GetEditModelAsync(id, userId, isAdmin);
                 if (formModel == null)
                 {
+                    _logger.LogWarning(
+                        "Toy {ToyId} action {ActionName} denied for user {UserId} (IsAdmin: {IsAdmin})",
+                        id,
+                        nameof(Edit),
+                        userId,
+                        isAdmin);
                     return Forbid();
                 }
 
@@ -122,11 +145,24 @@ namespace CrochetToysShop.Web.Controllers
                 return View(model);
             }
 
-            var ok = await toyService.EditAsync(id, model, userId);
+            var ok = await toyService.EditAsync(id, model, userId, isAdmin);
             if (!ok)
             {
+                _logger.LogWarning(
+                    "Toy {ToyId} action {ActionName} denied for user {UserId} (IsAdmin: {IsAdmin})",
+                    id,
+                    nameof(Edit),
+                    userId,
+                    isAdmin);
                 return Forbid();
             }
+
+            _logger.LogInformation(
+                "Toy {ToyId} action {ActionName} by user {UserId} (IsAdmin: {IsAdmin})",
+                id,
+                nameof(Edit),
+                userId,
+                isAdmin);
 
             TempData[TempDataKeys.SuccessMessage] = SuccessMessages.ToyEdited;
             return RedirectToAction(nameof(Details), new { id });
@@ -138,9 +174,16 @@ namespace CrochetToysShop.Web.Controllers
         public async Task<IActionResult> Delete(int id)
         {
             var userId = User.GetUserId();
-            var model = await toyService.GetDeleteModelAsync(id, userId);
+            var isAdmin = User.IsInRole(Roles.Admin);
+            var model = await toyService.GetDeleteModelAsync(id, userId, isAdmin);
             if (model == null)
             {
+                _logger.LogWarning(
+                    "Toy {ToyId} action {ActionName} denied for user {UserId} (IsAdmin: {IsAdmin})",
+                    id,
+                    nameof(Delete),
+                    userId,
+                    isAdmin);
                 return Forbid();
             }
 
@@ -155,11 +198,25 @@ namespace CrochetToysShop.Web.Controllers
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
             var userId = User.GetUserId();
-            var ok = await toyService.DeleteAsync(id, userId);
+            var isAdmin = User.IsInRole(Roles.Admin);
+            var ok = await toyService.DeleteAsync(id, userId, isAdmin);
             if (!ok)
             {
+                _logger.LogWarning(
+                    "Toy {ToyId} action {ActionName} denied for user {UserId} (IsAdmin: {IsAdmin})",
+                    id,
+                    nameof(DeleteConfirmed),
+                    userId,
+                    isAdmin);
                 return Forbid();
             }
+
+            _logger.LogInformation(
+                "Toy {ToyId} action {ActionName} by user {UserId} (IsAdmin: {IsAdmin})",
+                id,
+                nameof(DeleteConfirmed),
+                userId,
+                isAdmin);
 
             TempData[TempDataKeys.SuccessMessage] = SuccessMessages.ToyDeleted;
             return RedirectToAction(nameof(Index));

@@ -1,18 +1,28 @@
-﻿using CrochetToysShop.Data;
+using CrochetToysShop.Data;
 using CrochetToysShop.Data.Models;
 using CrochetToysShop.Services.Core.Interfaces;
 using CrochetToysShop.Web.ViewModels.Toys;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Caching.Memory;
 
 namespace CrochetToysShop.Services.Core
 {
     public class ToyService : IToyService
     {
+        private const string CategoriesDropdownCacheKey = "CategoriesDropdownCacheKey";
+
         private readonly ApplicationDbContext db;
+        private readonly IMemoryCache cache;
 
         public ToyService(ApplicationDbContext db)
+            : this(db, new MemoryCache(new MemoryCacheOptions()))
+        {
+        }
+
+        public ToyService(ApplicationDbContext db, IMemoryCache cache)
         {
             this.db = db;
+            this.cache = cache;
         }
 
         public async Task<ToyIndexViewModel> GetAllAsync(int? categoryId = null, int page = 1, int pageSize = 10)
@@ -49,14 +59,7 @@ namespace CrochetToysShop.Services.Core
                 })
                 .ToListAsync();
 
-            var categories = await db.Categories
-                .AsNoTracking()
-                .OrderBy(c => c.Name)
-                .Select(c => new CategoryDropdownViewModel {
-                    Id = c.Id,
-                    Name = c.Name
-                })
-                .ToListAsync();
+            var categories = await GetCachedCategoriesAsync();
 
             return new ToyIndexViewModel
             {
@@ -116,14 +119,7 @@ namespace CrochetToysShop.Services.Core
                 })
                 .ToListAsync();
 
-            var categories = await db.Categories
-                .AsNoTracking()
-                .OrderBy(c => c.Name)
-                .Select(c => new CategoryDropdownViewModel {
-                    Id = c.Id,
-                    Name = c.Name
-                })
-                .ToListAsync();
+            var categories = await GetCachedCategoriesAsync();
 
             return new ToyIndexViewModel
             {
@@ -160,15 +156,7 @@ namespace CrochetToysShop.Services.Core
                 })
                 .ToListAsync();
 
-            var categories = await db.Categories
-                .AsNoTracking()
-                .OrderBy(c => c.Name)
-                .Select(c => new CategoryDropdownViewModel
-                {
-                    Id = c.Id,
-                    Name = c.Name
-                })
-                .ToListAsync();
+            var categories = await GetCachedCategoriesAsync();
 
             return new ToyIndexViewModel
             {
@@ -202,15 +190,11 @@ namespace CrochetToysShop.Services.Core
         {
             return new ToyFormViewModel
             {
-                Categories = await db.Categories
-                    .AsNoTracking()
-                    .OrderBy(c => c.Name)
-                    .Select(c => new CategoryDropdownViewModel { Id = c.Id, Name = c.Name })
-                    .ToListAsync(),
+                Categories = await GetCachedCategoriesAsync(),
             };
         }
 
-        public async Task CreateAsync(ToyFormViewModel model, string? userId = null)
+        public async Task<int> CreateAsync(ToyFormViewModel model, string? userId = null)
         {
             var toy = new Toy
             {
@@ -227,9 +211,11 @@ namespace CrochetToysShop.Services.Core
 
             await db.Toys.AddAsync(toy);
             await db.SaveChangesAsync();
+
+            return toy.Id;
         }
 
-        public async Task<ToyFormViewModel?> GetEditModelAsync(int id, string? userId = null)
+        public async Task<ToyFormViewModel?> GetEditModelAsync(int id, string? userId = null, bool isAdmin = false)
         {
             var toy = await db.Toys
                 .AsNoTracking()
@@ -241,10 +227,9 @@ namespace CrochetToysShop.Services.Core
                 return null;
             }
 
-            // Check ownership
-            if (!string.IsNullOrEmpty(userId) && toy.CreatedByUserId != userId)
+            if (!CanManageToy(toy, userId, isAdmin))
             {
-                return null; // Unauthorized - not the creator
+                return null;
             }
 
             var model = new ToyFormViewModel
@@ -259,16 +244,12 @@ namespace CrochetToysShop.Services.Core
                 CategoryId = toy.CategoryId,
             };
 
-            model.Categories = await db.Categories
-                .AsNoTracking()
-                .OrderBy(c => c.Name)
-                .Select(c => new CategoryDropdownViewModel { Id = c.Id, Name = c.Name })
-                .ToListAsync();
+            model.Categories = await GetCachedCategoriesAsync();
 
             return model;
         }
 
-        public async Task<bool> EditAsync(int id, ToyFormViewModel model, string? userId = null)
+        public async Task<bool> EditAsync(int id, ToyFormViewModel model, string? userId = null, bool isAdmin = false)
         {
             var toy = await db.Toys.FindAsync(id);
             if (toy == null)
@@ -276,10 +257,9 @@ namespace CrochetToysShop.Services.Core
                 return false;
             }
 
-            // Check ownership
-            if (!string.IsNullOrEmpty(userId) && toy.CreatedByUserId != userId)
+            if (!CanManageToy(toy, userId, isAdmin))
             {
-                return false; // Unauthorized - not the creator
+                return false;
             }
 
             toy.Name = model.Name;
@@ -295,7 +275,7 @@ namespace CrochetToysShop.Services.Core
             return true;
         }
 
-        public async Task<ToyDeleteViewModel?> GetDeleteModelAsync(int id, string? userId = null)
+        public async Task<ToyDeleteViewModel?> GetDeleteModelAsync(int id, string? userId = null, bool isAdmin = false)
         {
             var toy = await db.Toys
                 .AsNoTracking()
@@ -307,16 +287,15 @@ namespace CrochetToysShop.Services.Core
                 return null;
             }
 
-            // Check ownership
-            if (!string.IsNullOrEmpty(userId) && toy.CreatedByUserId != userId)
+            if (!CanManageToy(toy, userId, isAdmin))
             {
-                return null; // Unauthorized - not the creator
+                return null;
             }
 
             return new ToyDeleteViewModel { Id = toy.Id, Name = toy.Name };
         }
 
-        public async Task<bool> DeleteAsync(int id, string? userId = null)
+        public async Task<bool> DeleteAsync(int id, string? userId = null, bool isAdmin = false)
         {
             var toy = await db.Toys.FindAsync(id);
             if (toy == null)
@@ -324,15 +303,47 @@ namespace CrochetToysShop.Services.Core
                 return false;
             }
 
-            // Check ownership
-            if (!string.IsNullOrEmpty(userId) && toy.CreatedByUserId != userId)
+            if (!CanManageToy(toy, userId, isAdmin))
             {
-                return false; // Unauthorized - not the creator
+                return false;
             }
 
             db.Toys.Remove(toy);
             await db.SaveChangesAsync();
             return true;
+        }
+
+        private static bool CanManageToy(Toy toy, string? userId, bool isAdmin)
+        {
+            if (isAdmin)
+            {
+                return true;
+            }
+
+            if (string.IsNullOrWhiteSpace(userId))
+            {
+                return false;
+            }
+
+            return toy.CreatedByUserId == userId;
+        }
+
+        private async Task<List<CategoryDropdownViewModel>> GetCachedCategoriesAsync()
+        {
+            return await cache.GetOrCreateAsync(CategoriesDropdownCacheKey, async entry =>
+            {
+                entry.AbsoluteExpirationRelativeToNow = TimeSpan.FromMinutes(20);
+
+                return await db.Categories
+                    .AsNoTracking()
+                    .OrderBy(c => c.Name)
+                    .Select(c => new CategoryDropdownViewModel
+                    {
+                        Id = c.Id,
+                        Name = c.Name
+                    })
+                    .ToListAsync();
+            }) ?? new List<CategoryDropdownViewModel>();
         }
     }
 }

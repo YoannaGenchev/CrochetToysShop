@@ -39,6 +39,7 @@ namespace CrochetToysShop.Web.Controllers
 
         [HttpPost]
         [Authorize(Roles = Roles.User)]
+        [ValidateAntiForgeryToken]
         [Route("Courses/Enroll/{id:int}")]
         public async Task<IActionResult> Enroll(int id)
         {

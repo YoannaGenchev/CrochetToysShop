@@ -31,8 +31,7 @@ namespace CrochetToysShop.Web.Controllers
                 return NotFound();
             }
 
-            ViewBag.CategoryName = categoryName;
-            return View("Index", categoryToys);
+            return RedirectToAction("Category", "Toys", new { categoryName });
         }
     }
 }

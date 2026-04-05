@@ -33,6 +33,7 @@ builder.Services.AddScoped<IToyService, ToyService>();
 builder.Services.AddScoped<ICategoryService, CategoryService>();
 builder.Services.AddScoped<IOrderService, OrderService>();
 builder.Services.AddScoped<ICourseService, CourseService>();
+builder.Services.AddMemoryCache();
 
 builder.Services.AddControllersWithViews();
 
@@ -49,7 +50,7 @@ using (var scope = app.Services.CreateScope())
     }
     catch (Exception ex)
     {
-        Console.WriteLine($"Migration error: {ex.Message}");
+        app.Logger.LogError(ex, "Startup database migration/seeding failed.");
     }
 }
 

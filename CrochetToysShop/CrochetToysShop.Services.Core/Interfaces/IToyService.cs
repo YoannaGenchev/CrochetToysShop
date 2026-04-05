@@ -14,14 +14,14 @@ namespace CrochetToysShop.Services.Core.Interfaces
 
         Task<ToyFormViewModel> GetCreateModelAsync();
 
-        Task CreateAsync(ToyFormViewModel model, string? userId = null);
+        Task<int> CreateAsync(ToyFormViewModel model, string? userId = null);
 
-        Task<ToyFormViewModel?> GetEditModelAsync(int id, string? userId = null);
+        Task<ToyFormViewModel?> GetEditModelAsync(int id, string? userId = null, bool isAdmin = false);
 
-        Task<bool> EditAsync(int id, ToyFormViewModel model, string? userId = null);
+        Task<bool> EditAsync(int id, ToyFormViewModel model, string? userId = null, bool isAdmin = false);
 
-        Task<ToyDeleteViewModel?> GetDeleteModelAsync(int id, string? userId = null);
+        Task<ToyDeleteViewModel?> GetDeleteModelAsync(int id, string? userId = null, bool isAdmin = false);
 
-        Task<bool> DeleteAsync(int id, string? userId = null);
+        Task<bool> DeleteAsync(int id, string? userId = null, bool isAdmin = false);
     }
 }
