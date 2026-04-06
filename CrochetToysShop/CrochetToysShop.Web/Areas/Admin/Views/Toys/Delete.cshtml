@@ -1,0 +1,23 @@
+@model CrochetToysShop.Web.ViewModels.Toys.ToyDeleteViewModel
+
+@{
+    ViewData["Title"] = $"Delete Toy - {Model.Name}";
+}
+
+<div class="admin-toy-form-page">
+    <h2 class="page-title toy-form-title">@ViewData["Title"]</h2>
+
+    <div class="admin-toy-form-shell">
+        <div class="admin-toy-delete-card">
+            <div class="alert alert-warning admin-toy-delete-alert mb-0">
+                Are you sure you want to delete <strong>@Model.Name</strong>?
+            </div>
+
+            <form asp-area="Admin" asp-action="Delete" asp-route-id="@Model.Id" method="post" class="admin-toy-delete-actions">
+                @Html.AntiForgeryToken()
+                <button type="submit" class="btn btn-danger">Yes, delete</button>
+                <a asp-area="" asp-controller="Toys" asp-action="Details" asp-route-id="@Model.Id" class="btn btn-secondary">Cancel</a>
+            </form>
+        </div>
+    </div>
+</div>

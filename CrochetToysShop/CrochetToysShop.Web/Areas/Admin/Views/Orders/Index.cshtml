@@ -1,0 +1,100 @@
+@model CrochetToysShop.Web.ViewModels.Orders.OrderIndexViewModel
+
+@{
+    ViewData["Title"] = "Admin Orders";
+}
+
+<h2 class="page-title orders-page-title">@ViewData["Title"]</h2>
+
+@if (!Model.Orders.Any())
+{
+    <div class="alert alert-info">No orders yet.</div>
+}
+else
+{
+    <div class="table-responsive orders-table-wrap">
+    <table class="table table-striped align-middle orders-table">
+        <thead class="orders-table-head">
+            <tr>
+                <th>#</th>
+                <th>Date</th>
+                <th>Status</th>
+                <th>Toy</th>
+                <th>Customer</th>
+                <th>Phone</th>
+                <th>Address</th>
+                <th class="text-end">Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var o in Model.Orders)
+            {
+                <tr>
+                    <td>@o.Id</td>
+                    <td class="text-nowrap">@o.CreatedOn.ToLocalTime().ToString("dd.MM.yyyy HH:mm")</td>
+                    <td>
+                        @if (o.Status == OrderStatus.Completed)
+                        {
+                            <span class="badge bg-success orders-status-badge">@OrderStatus.Completed</span>
+                        }
+                        else
+                        {
+                            <span class="badge bg-warning text-dark orders-status-badge">@OrderStatus.New</span>
+                        }
+                    </td>
+                    <td>
+                        <a asp-area="" asp-controller="Toys" asp-action="Details" asp-route-id="@o.ToyId" class="orders-toy-link">@o.ToyName</a>
+                    </td>
+                    <td>@o.CustomerName</td>
+                    <td class="text-nowrap">@o.PhoneNumber</td>
+                    <td>@o.Address</td>
+                    <td class="text-end">
+                        @if (o.Status != OrderStatus.Completed)
+                        {
+                            <form asp-area="Admin" asp-action="MarkCompleted" method="post" class="d-inline-block orders-action-form">
+                                @Html.AntiForgeryToken()
+                                <input type="hidden" name="id" value="@o.Id" />
+                                <button class="btn btn-sm btn-success orders-action-btn">Mark completed</button>
+                            </form>
+                        }
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+    </div>
+
+    @if (Model.Pagination.TotalPages > 1)
+    {
+        <nav aria-label="Page navigation" class="mt-4">
+            <ul class="pagination justify-content-center">
+                @if (Model.Pagination.HasPreviousPage)
+                {
+                    <li class="page-item">
+                        <a class="page-link" asp-area="Admin" asp-action="Index" asp-route-page="1">First</a>
+                    </li>
+                    <li class="page-item">
+                        <a class="page-link" asp-area="Admin" asp-action="Index" asp-route-page="@(Model.Pagination.CurrentPage - 1)">Previous</a>
+                    </li>
+                }
+
+                @foreach (var pageNumber in Model.Pagination.PageNumbers)
+                {
+                    <li class="page-item @(pageNumber == Model.Pagination.CurrentPage ? "active" : "")">
+                        <a class="page-link" asp-area="Admin" asp-action="Index" asp-route-page="@pageNumber">@pageNumber</a>
+                    </li>
+                }
+
+                @if (Model.Pagination.HasNextPage)
+                {
+                    <li class="page-item">
+                        <a class="page-link" asp-area="Admin" asp-action="Index" asp-route-page="@(Model.Pagination.CurrentPage + 1)">Next</a>
+                    </li>
+                    <li class="page-item">
+                        <a class="page-link" asp-area="Admin" asp-action="Index" asp-route-page="@Model.Pagination.TotalPages">Last</a>
+                    </li>
+                }
+            </ul>
+        </nav>
+    }
+}

@@ -1,0 +1,47 @@
+@model IEnumerable<CrochetToysShop.Web.ViewModels.Courses.AdminCourseEnrollmentListItemViewModel>
+
+@{
+    ViewData["Title"] = "Course Enrollments";
+}
+
+<h2 class="page-title orders-page-title">@ViewData["Title"]</h2>
+
+@if (!Model.Any())
+{
+    <div class="alert alert-info">No course enrollments yet.</div>
+}
+else
+{
+    <div class="table-responsive orders-table-wrap">
+        <table class="table table-striped align-middle orders-table">
+            <thead class="orders-table-head">
+                <tr>
+                    <th>Course</th>
+                    <th>User Email / Username</th>
+                    <th>Enrolled On</th>
+                    <th>Status</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var enrollment in Model)
+                {
+                    <tr>
+                        <td>@enrollment.CourseName</td>
+                        <td>@enrollment.EnrolledUser</td>
+                        <td class="text-nowrap">@enrollment.EnrolledAt.ToLocalTime().ToString("dd.MM.yyyy HH:mm")</td>
+                        <td>
+                            @if (enrollment.IsCompleted)
+                            {
+                                <span class="badge bg-success orders-status-badge">Completed</span>
+                            }
+                            else
+                            {
+                                <span class="badge bg-warning text-dark orders-status-badge">In progress</span>
+                            }
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+}
