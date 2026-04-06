@@ -104,7 +104,6 @@ namespace CrochetToysShop.Services.Core
 
         public async Task<bool> EnrollAsync(int courseId, string userId)
         {
-            // Check if course exists and has space
             var course = await db.Courses
                 .FirstOrDefaultAsync(c => c.Id == courseId && c.IsActive);
 
@@ -121,7 +120,6 @@ namespace CrochetToysShop.Services.Core
                 return false;
             }
 
-            // Check if already enrolled
             var existingEnrollment = await db.Enrollments
                 .FirstOrDefaultAsync(e => e.CourseId == courseId && e.UserId == userId);
 

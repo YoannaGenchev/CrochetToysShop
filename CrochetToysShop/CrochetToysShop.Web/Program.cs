@@ -7,7 +7,6 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using static CrochetToysShop.Common.Constants.ApplicationConstants;
 
-// Services
 var builder = WebApplication.CreateBuilder(args);
 
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection")
@@ -20,7 +19,6 @@ builder.Services.AddDatabaseDeveloperPageExceptionFilter();
 
 builder.Services.AddDefaultIdentity<IdentityUser>(options =>
 {
-    // Use baseline-strong credentials for final project security while keeping UX simple.
     options.SignIn.RequireConfirmedAccount = false;
 
     options.Password.RequireDigit = true;
@@ -52,14 +50,10 @@ builder.Services.AddHttpLogging(options =>
         Microsoft.AspNetCore.HttpLogging.HttpLoggingFields.Duration;
 });
 
-// Build app
 var app = builder.Build();
 
-// Database initialization applies migrations and seed data at startup.
-// Admin seed password is read from configuration/environment, not hardcoded in production config.
 app.ApplyMigrationsAndSeed();
 
-// Environment configuration
 if (app.Environment.IsDevelopment())
 {
     app.UseMigrationsEndPoint();
@@ -70,7 +64,6 @@ else
     app.UseHsts();
 }
 
-// Middleware pipeline
 app.UseStatusCodePagesWithReExecute("/error/{0}");
 
 app.UseHttpsRedirection();
@@ -82,7 +75,6 @@ app.UseHttpLogging();
 app.UseAuthentication();
 app.UseAuthorization();
 
-// Routing
 app.MapAreaControllerRoute(
     name: "admin",
     areaName: "Admin",

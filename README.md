@@ -1,243 +1,192 @@
-﻿# CrochetToysShop
+﻿# 🧶 CrochetToysShop
 
-CrochetToysShop is an ASP.NET Core MVC final project focused on two clearly separated domains:
+> ASP.NET Core MVC final project for handmade toy ordering and crochet course enrollment.
 
-- **Handmade toys catalog and single-item order requests**
-- **Crochet learning courses with user enrollment**
+CrochetToysShop is a web platform with two clearly separated domains:
+- Handmade toys catalog with direct order requests
+- Crochet learning courses with user enrollment
 
-The project is built with a layered architecture, role-based access, database seeding, and automated tests.
+The project demonstrates layered architecture, role-based access control, database seeding, and automated testing.
+---
 
-## 1) Project overview
+## 🗂️ Project Overview
 
-CrochetToysShop is a web platform where users can discover handmade crochet toys and course offerings.
+CrochetToysShop has two clearly separated domains:
 
-- Toys are presented through a catalog with filtering/search and details pages.
-- Toy ordering is implemented as a **single-item direct order/request flow** (no shopping cart in current scope).
-- Courses are presented as a separate enrollment domain.
+- **Toys** — a public catalog with filtering, search, pagination, and single-item order requests
+- **Courses** — a crochet learning system with enrollment for registered users
 
-## 2) Target users
+---
 
-- **Anonymous visitors**
-  - Browse toys and courses
-  - Open toy/course details
-  - Submit toy order requests
-- **Registered users (User role)**
-  - Enroll in courses
-  - View enrolled courses in **My Courses**
-- **Administrators (Admin role)**
-  - Access custom **Admin Area**
-  - Manage toy create/edit/delete
-  - Manage order lifecycle (mark completed)
+## 👤 User Roles
 
-## 3) Core features
+### Anonymous Users
+- Browse toys and courses
+- View details pages
+- Submit toy order requests
+
+### Registered Users (User role)
+- Enroll in courses
+- View enrolled courses in **My Courses**
+
+### Administrators (Admin role)
+- Access Admin Area
+- Manage toys (create/edit/delete)
+- Manage orders (mark completed)
+- Monitor course enrollments
+
+
+---
+
+## ✨ Features
 
 ### Toys
-- Public catalog with pagination
-- Category filtering and search
-- Availability tracking
-- Details page for each toy
-- Admin create/edit/delete management
+- Public catalog with pagination, category filtering, and text search
+- Availability status tracking
+- Detailed product pages
+- Admin CRUD operations (Create / Edit / Delete)
 
-### Orders (separate from courses)
-- Single-item direct order/request for a selected toy
-- Validation on order form
-- Admin order list and status update (new/completed)
+### Orders
+- Single-item order/request flow with form validation
+- Admin order management (mark as completed)
 
-### Courses (separate from toy ordering)
-- Public course list with filtering and pagination
-- Course details with difficulty/duration/price/capacity
-- Enrollment flow for authenticated users in User role
-- **My Courses** page showing current user enrollments
+### Courses
+- Public course listing with difficulty-level filtering and pagination
+- Course details: duration, level, price, enrollment capacity
+- Enrollment system for authenticated users
+- **My Courses** page per user
 
-## 4) Architecture and project structure
+---
 
-The solution uses a layered project structure:
+## 🏗️ Architecture
 
-- `CrochetToysShop.Web` - MVC UI layer (controllers, views, startup)
-- `CrochetToysShop.Services.Core` - business logic/services
-- `CrochetToysShop.Services.Models` - service DTO/models
-- `CrochetToysShop.Data` - EF Core DbContext, migrations, seeding
-- `CrochetToysShop.Data.Models` - entity models
-- `CrochetToysShop.Web.ViewModels` - MVC view models
-- `CrochetToysShop.Web.Infrastructure` - web extensions/helpers
-- `CrochetToysShop.Services.Tests` - service-layer test suite
-- `CrochetToysShop.IntegrationTests` - minimal HTTP integration tests
+The solution follows a **layered architecture**:
 
-Request flow:
-
-`Controller -> Service -> DbContext/EF Core -> ViewModel/View`
-
-## 5) Domain model summary
-
-Main entities include:
-
-- `Toy`
-- `Category`
-- `Order`
-- `Course`
-- `Enrollment`
-- `OrderRequest` (legacy model kept in data model set)
-
-Current active flows use `Order` for toy orders and `Enrollment` for course participation.
-
-## 6) Roles and authorization
-
-Authentication/authorization is based on ASP.NET Core Identity with roles:
-
-- `User`
-- `Admin`
-
-Authorization is applied on protected actions and area controllers.
-
-## 🔐 Demo Credentials
-
-A default administrator account may be seeded on application startup:
-
-**Admin account:**
-- Email: yoanna@admin.com
-
-Admin password seeding behavior:
-
-- In development, the password can be provided from `appsettings.Development.json`.
-- For non-development environments, provide `AdminSeed:Password` via environment/user secrets.
-- Example (PowerShell):
-
-```powershell
-$env:AdminSeed__Password="YourStrongAdminPassword"
+```
+CrochetToysShop.Web               → MVC UI (Controllers, Views, Areas)
+CrochetToysShop.Services.Core     → Business logic
+CrochetToysShop.Services.Models   → Service-layer DTOs
+CrochetToysShop.Data              → EF Core DbContext + migrations
+CrochetToysShop.Data.Models       → Domain entities
+CrochetToysShop.Web.ViewModels    → View models
+CrochetToysShop.Web.Infrastructure → Helpers, extensions
+CrochetToysShop.Services.Tests    → Unit tests
+CrochetToysShop.IntegrationTests  → Integration tests
 ```
 
-> If the account is not available, ensure the database is created and seeding has been executed.
+**Request flow:** `Controller → Service → EF Core → ViewModel → Razor View`
 
-## 7) Admin Area
+The UI uses a shared layout, partial views, and Razor sections.
 
-The project includes a real custom MVC area under:
+---
 
-- `Areas/Admin/Controllers`
-- `Areas/Admin/Views`
+## 🗄️ Domain Model
 
-Implemented Admin Area capabilities:
+| Entity | Description |
+|--------|-------------|
+| `Toy` | Handmade product with name, description, price, category, availability |
+| `Category` | Toy category (Easter, Seasonal, Flowers, Accessories) |
+| `Order` | Single-item order request submitted by a user |
+| `Course` | Crochet course with level, duration, price, capacity |
+| `Enrollment` | Join entity between `User` and `Course` |
 
-- Dashboard landing page
-- Orders management (index + mark completed)
-- Toys management actions (create/edit/delete)
+---
 
-Admin behavior clarification:
+## 🔐 Security
 
-- Administrators manage platform data and operations (orders, toys, course enrollments overview).
-- Administrators cannot enroll in courses as learners.
+- **ASP.NET Core Identity** with `User` and `Admin` roles
+- Role-based authorization via attributes and area-based access control
+- **Antiforgery tokens** applied globally
+- Client-side and server-side validation on all forms
+- XSS-safe Razor rendering (no `@Html.Raw` on user input)
+- No raw SQL — EF Core LINQ queries only
+- Custom error pages for **404 Not Found** and **500 Server Error**
 
-Admin entry is available from the main navigation for Admin users.
+---
 
-## 8) Security and validation
+## 🌱 Database Seeding
 
-- **Identity-based authentication** with roles
-- **Authorization attributes** on protected routes/actions
-- **Global antiforgery validation** via MVC filter + form tokens
-- **Server-side validation** with DataAnnotations and `ModelState`
-- **Client-side validation** through validation scripts/Tag Helpers
-- **XSS-safe Razor rendering** through default HTML encoding in views
-- **EF Core LINQ usage** (no raw SQL in application flow)
-- Custom error pages for:
-  - `404`
-  - `500`
+On first run the database is seeded with:
 
-### Security summary
-
-- Antiforgery protection is applied globally for state-changing requests.
-- Role-based authorization separates public, user, and admin-only actions.
-- Validation is applied on both client side and server side.
-- Razor views rely on encoded output by default, supporting XSS-safe rendering.
-
-## 9) Seeding
-
-Database seeding includes:
-
-- Roles (`Admin`, `User`)
-- Seed admin account
+- Roles: `Admin`, `User`
+- Admin account (yoanna@admin.com / password: Admin1)
 - Categories
-- Toys
-- Courses
+- Sample toys (including Easter, Seasonal, Flowers, and Accessories collections)
+- Sample courses (Beginner / Intermediate / Advanced Amigurumi, Baby Clothes Basics)
 
-Seeder logic includes duplicate-safe behavior and seeded data updates for maintained records.
+---
 
-## 10) Database and setup instructions
+## ⚙️ Setup
 
-### Prerequisites
+### Requirements
+- .NET 8
+- SQL Server (LocalDB is supported)
 
-- .NET SDK 8.0+
-- SQL Server (LocalDB supported)
-- EF Core CLI tools (`dotnet-ef`)
-
-### Connection string
-
-Default connection is configured in:
-
-- `CrochetToysShop.Web/appsettings.json`
-
-Example uses LocalDB:
-
-- `Server=(localdb)\MSSQLLocalDB;Database=CrochetToysShop;...`
-
-## 11) Migrations and run instructions
-
-From the solution folder containing `CrochetToysShopSolution.sln`:
+### Run
 
 ```bash
 dotnet restore
 dotnet ef database update --project CrochetToysShop.Data --startup-project CrochetToysShop.Web
 dotnet run --project CrochetToysShop.Web
+
 ```
+---
 
-On startup, migrations and seeding are applied by the app initialization pipeline.
-
-## 12) Testing
+## 🧪 Testing
 
 ### Test projects
 
-- `CrochetToysShop.Services.Tests`
-- `CrochetToysShop.IntegrationTests`
+| Project | Type |
+|---------|------|
+| `CrochetToysShop.Services.Tests` | Unit tests |
+| `CrochetToysShop.IntegrationTests` | Integration tests |
 
-### Current verified status
+### Results
 
-- **Service tests:** 63 passed
-- **Integration tests:** 9 passed
-
-### Run tests
-
-```bash
-dotnet test
-dotnet test CrochetToysShop.Services.Tests/CrochetToysShop.Services.Tests.csproj
-dotnet test CrochetToysShop.IntegrationTests/CrochetToysShop.IntegrationTests.csproj
-```
-
-## 13) Coverage evidence
-
-Coverage is collected with the already configured `coverlet.collector`.
-
-Command used:
+- ✅ **63 service tests** passed
+- ✅ **9 integration tests** passed
 
 ```bash
 dotnet test --collect:"XPlat Code Coverage"
 ```
 
-Verified service-layer coverage for `CrochetToysShop.Services.Core`:
+### Coverage (Services.Core)
 
-- **Line coverage:** ~97%
-- **Branch coverage:** ~74%
+| Metric | Coverage |
+|--------|---------|
+| Line | ~97% |
+| Branch | ~74% |
 
-This reflects strong business-logic test coverage in the service layer.
+---
 
-## 14) Current scope and intentional limitations
+## 🛒 Order Flow Design
 
-To keep scope focused and stable for final submission:
+The application intentionally uses a **single-item order/request flow** instead of a shopping cart.
 
-- Toy ordering is implemented as a **single-item direct order/request flow**.
-- The project **does not** implement a full shopping cart/checkout pipeline in the current version.
-- Courses are a separate enrollment domain and are not mixed with toy ordering.
+This design choice:
+- simplifies the user experience
+- reflects the nature of handmade, custom orders
+- avoids unnecessary complexity for bulk purchasing
 
-## 15) Optional future improvements
+---
 
-- Full shopping cart and checkout flow
-- Extended admin analytics/dashboard widgets
-- Additional integration tests for authenticated role scenarios
-- CI/CD and deployment pipeline
+## 🔮 Future Improvements
+
+- Shopping cart system
+- Admin analytics dashboard
+- Deployment pipeline (Azure)
+
+
+## 📸 Screenshots
+
+### Home Page
+![Home](screenshots/home.png)
+
+### Toys Catalog
+![Toys](screenshots/toys.png)
+
+### Courses Page
+![Courses](screenshots/courses.png)
+
+### Admin Dashboard
+![Admin](screenshots/admin.png)

@@ -230,7 +230,8 @@ namespace CrochetToysShop.Services.Tests
 
                 // Assert
                 Assert.True(result);
-                var updated = await context.Orders.FindAsync(1);
+                var updated = await context.Orders.FindAsync(1)
+                    ?? throw new InvalidOperationException("Expected order to exist after completion.");
                 Assert.Equal("Completed", updated.Status);
             }
         }

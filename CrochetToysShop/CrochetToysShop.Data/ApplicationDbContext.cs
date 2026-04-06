@@ -27,6 +27,10 @@ namespace CrochetToysShop.Data
         {
             base.OnModelCreating(modelBuilder);
 
+            modelBuilder.Entity<Course>()
+                .Property(c => c.Price)
+                .HasPrecision(18, 2);
+
             modelBuilder.Entity<Enrollment>()
                 .HasIndex(e => new { e.CourseId, e.UserId })
                 .IsUnique();

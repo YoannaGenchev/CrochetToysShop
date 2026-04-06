@@ -12,7 +12,7 @@ namespace CrochetToysShop.Data.Models
 
         public int DurationHours { get; set; }
 
-        public string Difficulty { get; set; } = "Beginner"; // Beginner, Intermediate, Advanced
+        public string Difficulty { get; set; } = "Beginner";
 
         public string? ImageUrl { get; set; }
 
@@ -22,7 +22,6 @@ namespace CrochetToysShop.Data.Models
 
         public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
 
-        // Navigation properties
         public virtual ICollection<Enrollment> Enrollments { get; set; } = new List<Enrollment>();
     }
 }

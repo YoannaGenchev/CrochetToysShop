@@ -4,10 +4,8 @@
 
 namespace CrochetToysShop.Data.Migrations
 {
-    /// <inheritdoc />
     public partial class AddUniqueEnrollmentConstraint : Migration
     {
-        /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropIndex(
@@ -29,7 +27,6 @@ namespace CrochetToysShop.Data.Migrations
                 unique: true);
         }
 
-        /// <inheritdoc />
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropIndex(

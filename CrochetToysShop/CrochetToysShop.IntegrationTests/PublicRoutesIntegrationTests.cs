@@ -15,42 +15,33 @@ public class PublicRoutesIntegrationTests : IClassFixture<IsolatedSqlServerWebAp
     [Fact]
     public async Task GetHomeRoute_ReturnsSuccessStatusCode()
     {
-        // Arrange
         using var client = factory.CreateClient();
 
-        // Act
         var response = await client.GetAsync("/");
 
-        // Assert
         response.EnsureSuccessStatusCode();
     }
 
     [Fact]
     public async Task GetToysRoute_ReturnsSuccessStatusCode()
     {
-        // Arrange
         using var client = factory.CreateClient();
 
-        // Act
         var response = await client.GetAsync("/Toys");
 
-        // Assert
         response.EnsureSuccessStatusCode();
     }
 
     [Fact]
     public async Task GetOrdersRoute_AsGuest_RedirectsToLogin()
     {
-        // Arrange
         using var client = factory.CreateClient(new WebApplicationFactoryClientOptions
         {
             AllowAutoRedirect = false
         });
 
-        // Act
         var response = await client.GetAsync("/Orders");
 
-        // Assert
         Assert.Equal(HttpStatusCode.Redirect, response.StatusCode);
         Assert.NotNull(response.Headers.Location);
         Assert.Contains("/Identity/Account/Login", response.Headers.Location!.ToString());
@@ -59,16 +50,13 @@ public class PublicRoutesIntegrationTests : IClassFixture<IsolatedSqlServerWebAp
     [Fact]
     public async Task GetToyCreateRoute_AsGuest_RedirectsToLogin()
     {
-        // Arrange
         using var client = factory.CreateClient(new WebApplicationFactoryClientOptions
         {
             AllowAutoRedirect = false
         });
 
-        // Act
         var response = await client.GetAsync("/Toys/Create");
 
-        // Assert
         Assert.Equal(HttpStatusCode.Redirect, response.StatusCode);
         Assert.NotNull(response.Headers.Location);
         Assert.Contains("/Identity/Account/Login", response.Headers.Location!.ToString());
@@ -77,16 +65,13 @@ public class PublicRoutesIntegrationTests : IClassFixture<IsolatedSqlServerWebAp
     [Fact]
     public async Task PostCourseEnroll_AsGuest_RedirectsToLogin()
     {
-        // Arrange
         using var client = factory.CreateClient(new WebApplicationFactoryClientOptions
         {
             AllowAutoRedirect = false
         });
 
-        // Act
         var response = await client.PostAsync("/Courses/Enroll/1", content: null);
 
-        // Assert
         Assert.Equal(HttpStatusCode.Redirect, response.StatusCode);
         Assert.NotNull(response.Headers.Location);
         Assert.Contains("/Identity/Account/Login", response.Headers.Location!.ToString());
@@ -95,16 +80,13 @@ public class PublicRoutesIntegrationTests : IClassFixture<IsolatedSqlServerWebAp
     [Fact]
     public async Task PostOrderMarkCompleted_AsGuest_RedirectsToLogin()
     {
-        // Arrange
         using var client = factory.CreateClient(new WebApplicationFactoryClientOptions
         {
             AllowAutoRedirect = false
         });
 
-        // Act
         var response = await client.PostAsync("/Orders/MarkCompleted/1", content: null);
 
-        // Assert
         Assert.Equal(HttpStatusCode.Redirect, response.StatusCode);
         Assert.NotNull(response.Headers.Location);
         Assert.Contains("/Identity/Account/Login", response.Headers.Location!.ToString());
@@ -113,16 +95,13 @@ public class PublicRoutesIntegrationTests : IClassFixture<IsolatedSqlServerWebAp
     [Fact]
     public async Task GetMyCourses_AsGuest_RedirectsToLogin()
     {
-        // Arrange
         using var client = factory.CreateClient(new WebApplicationFactoryClientOptions
         {
             AllowAutoRedirect = false
         });
 
-        // Act
         var response = await client.GetAsync("/Courses/MyCourses");
 
-        // Assert
         Assert.Equal(HttpStatusCode.Redirect, response.StatusCode);
         Assert.NotNull(response.Headers.Location);
         Assert.Contains("/Identity/Account/Login", response.Headers.Location!.ToString());

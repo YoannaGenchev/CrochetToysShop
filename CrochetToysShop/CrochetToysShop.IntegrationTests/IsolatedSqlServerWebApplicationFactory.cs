@@ -50,11 +50,11 @@ public sealed class IsolatedSqlServerWebApplicationFactory : WebApplicationFacto
 
             using var dropCommand = masterConnection.CreateCommand();
             dropCommand.CommandText = $@"
-IF DB_ID('{databaseName}') IS NOT NULL
-BEGIN
-    ALTER DATABASE [{databaseName}] SET SINGLE_USER WITH ROLLBACK IMMEDIATE;
-    DROP DATABASE [{databaseName}];
-END";
+                IF DB_ID('{databaseName}') IS NOT NULL
+                BEGIN
+                ALTER DATABASE [{databaseName}] SET SINGLE_USER WITH ROLLBACK IMMEDIATE;
+                DROP DATABASE [{databaseName}];
+                END";
             dropCommand.ExecuteNonQuery();
         }
         catch

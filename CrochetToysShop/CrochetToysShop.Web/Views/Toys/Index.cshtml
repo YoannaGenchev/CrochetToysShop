@@ -1,8 +1,10 @@
 @model CrochetToysShop.Web.ViewModels.Toys.ToyIndexViewModel
 
-@{
+@{ 
     ViewData["Title"] = "Toys";
     var easterCategoryId = Model.Categories.FirstOrDefault(c => c.Name == "Easter")?.Id;
+    var searchQuery = ViewBag.SearchQuery as string;
+    var pagerAction = string.IsNullOrWhiteSpace(searchQuery) ? "Index" : "Search";
 }
 
 <div class="d-flex flex-wrap gap-3 align-items-center justify-content-between toys-page-header">
@@ -90,27 +92,27 @@ else
                 @if (Model.Pagination.HasPreviousPage)
                 {
                     <li class="page-item">
-                        <a class="page-link" asp-action="Index" asp-route-categoryId="@Model.CategoryId" asp-route-page="1">First</a>
+                        <a class="page-link" asp-action="@pagerAction" asp-route-categoryId="@Model.CategoryId" asp-route-q="@searchQuery" asp-route-page="1">First</a>
                     </li>
                     <li class="page-item">
-                        <a class="page-link" asp-action="Index" asp-route-categoryId="@Model.CategoryId" asp-route-page="@(Model.Pagination.CurrentPage - 1)">Previous</a>
+                        <a class="page-link" asp-action="@pagerAction" asp-route-categoryId="@Model.CategoryId" asp-route-q="@searchQuery" asp-route-page="@(Model.Pagination.CurrentPage - 1)">Previous</a>
                     </li>
                 }
 
                 @foreach (var pageNumber in Model.Pagination.PageNumbers)
                 {
                     <li class="page-item @(pageNumber == Model.Pagination.CurrentPage ? "active" : "")">
-                        <a class="page-link" asp-action="Index" asp-route-categoryId="@Model.CategoryId" asp-route-page="@pageNumber">@pageNumber</a>
+                        <a class="page-link" asp-action="@pagerAction" asp-route-categoryId="@Model.CategoryId" asp-route-q="@searchQuery" asp-route-page="@pageNumber">@pageNumber</a>
                     </li>
                 }
 
                 @if (Model.Pagination.HasNextPage)
                 {
                     <li class="page-item">
-                        <a class="page-link" asp-action="Index" asp-route-categoryId="@Model.CategoryId" asp-route-page="@(Model.Pagination.CurrentPage + 1)">Next</a>
+                        <a class="page-link" asp-action="@pagerAction" asp-route-categoryId="@Model.CategoryId" asp-route-q="@searchQuery" asp-route-page="@(Model.Pagination.CurrentPage + 1)">Next</a>
                     </li>
                     <li class="page-item">
-                        <a class="page-link" asp-action="Index" asp-route-categoryId="@Model.CategoryId" asp-route-page="@Model.Pagination.TotalPages">Last</a>
+                        <a class="page-link" asp-action="@pagerAction" asp-route-categoryId="@Model.CategoryId" asp-route-q="@searchQuery" asp-route-page="@Model.Pagination.TotalPages">Last</a>
                     </li>
                 }
             </ul>

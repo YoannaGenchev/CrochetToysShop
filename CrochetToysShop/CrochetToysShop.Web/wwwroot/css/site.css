@@ -217,7 +217,10 @@ body {
 
 /* Hero */
 .hero-section {
-    background: linear-gradient(rgba(25, 42, 36, 0.54), rgba(25, 42, 36, 0.54)), url('/images/logo/cover.jfif') center/cover no-repeat;
+    background-image: linear-gradient(rgba(25, 42, 36, 0.54), rgba(25, 42, 36, 0.54)), url('/images/logo/cover.jfif');
+    background-position: center;
+    background-size: cover;
+    background-repeat: no-repeat;
     color: #fff;
     margin: 24px auto 64px auto;
     border-radius: 30px;
@@ -794,104 +797,105 @@ body {
             min-width: 0;
         }
     }
-/* Orders */
-.orders-page-title {
-    margin-bottom: 1.1rem;
-}
+    /* Orders */
+    .orders-page-title {
+        margin-bottom: 1.1rem;
+    }
 
-.orders-table-wrap {
-    background-color: rgba(245, 237, 224, 0.6);
-    border: 1px solid rgba(45, 90, 78, 0.14);
-    border-radius: 0.75rem;
-    padding: 0.4rem;
-}
-
-.orders-table {
-    margin-bottom: 0;
-}
-
-.orders-table thead th {
-    color: #2d5a4e;
-    font-weight: 700;
-    border-bottom-width: 1px;
-}
-
-.orders-table td,
-.orders-table th {
-    vertical-align: middle;
-    padding-top: 0.8rem;
-    padding-bottom: 0.8rem;
-}
-
-.orders-status-badge {
-    min-width: 6.3rem;
-    text-align: center;
-    font-size: 0.8rem;
-    padding: 0.4rem 0.55rem;
-}
-
-.orders-toy-link {
-    color: #2d5a4e;
-    font-weight: 600;
-    text-decoration: none;
-}
-
-.orders-toy-link:hover {
-    text-decoration: underline;
-}
-
-.orders-action-form {
-    margin-bottom: 0;
-}
-
-.orders-action-btn {
-    min-width: 8.5rem;
-    min-height: 2.25rem;
-}
-
-@media (max-width: 767.98px) {
     .orders-table-wrap {
-        padding: 0.25rem;
+        background-color: rgba(245, 237, 224, 0.6);
+        border: 1px solid rgba(45, 90, 78, 0.14);
+        border-radius: 0.75rem;
+        padding: 0.4rem;
+    }
+
+    .orders-table {
+        margin-bottom: 0;
+    }
+
+        .orders-table thead th {
+            color: #2d5a4e;
+            font-weight: 700;
+            border-bottom-width: 1px;
+        }
+
+        .orders-table td,
+        .orders-table th {
+            vertical-align: middle;
+            padding-top: 0.8rem;
+            padding-bottom: 0.8rem;
+        }
+
+    .orders-status-badge {
+        min-width: 6.3rem;
+        text-align: center;
+        font-size: 0.8rem;
+        padding: 0.4rem 0.55rem;
+    }
+
+    .orders-toy-link {
+        color: #2d5a4e;
+        font-weight: 600;
+        text-decoration: none;
+    }
+
+        .orders-toy-link:hover {
+            text-decoration: underline;
+        }
+
+    .orders-action-form {
+        margin-bottom: 0;
     }
 
     .orders-action-btn {
-        width: 100%;
+        min-width: 8.5rem;
+        min-height: 2.25rem;
     }
-}
-.toy-card-img-placeholder {
-    height: 220px;
-    background-color: #2d5a4e;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 3rem;
-}
 
-.toy-details-image {
-    width: 100%;
-    object-fit: contain;
-    background-color: #f8f9fa;
-    padding: 0.35rem;
-}
+    @media (max-width: 767.98px) {
+        .orders-table-wrap {
+            padding: 0.25rem;
+        }
 
-.toy-details-actions .btn {
-    min-width: 7.5rem;
-    min-height: 2.5rem;
-}
+        .orders-action-btn {
+            width: 100%;
+        }
+    }
 
-#loginForm,
-#account,
-#registerForm,
-#external-account {
-    background-color: rgba(245, 237, 224, 0.68);
-    border: 1px solid rgba(45, 90, 78, 0.14);
-    border-radius: 0.75rem;
-    padding: 1.1rem;
-}
+    .toy-card-img-placeholder {
+        height: 220px;
+        background-color: #2d5a4e;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 3rem;
+    }
 
-#external-account {
-    margin-bottom: 0;
-}
+    .toy-details-image {
+        width: 100%;
+        object-fit: contain;
+        background-color: #f8f9fa;
+        padding: 0.35rem;
+    }
+
+    .toy-details-actions .btn {
+        min-width: 7.5rem;
+        min-height: 2.5rem;
+    }
+
+    #loginForm,
+    #account,
+    #registerForm,
+    #external-account {
+        background-color: rgba(245, 237, 224, 0.68);
+        border: 1px solid rgba(45, 90, 78, 0.14);
+        border-radius: 0.75rem;
+        padding: 1.1rem;
+    }
+
+    #external-account {
+        margin-bottom: 0;
+    }
 
     .card {
         border: none;
@@ -908,62 +912,63 @@ body {
             box-shadow: 0 10px 26px rgba(0,0,0,0.12);
         }
 
-    .card .card-title {
-        color: inherit;
+        .card .card-title {
+            color: inherit;
+        }
+
+        .card .card-footer {
+            background-color: transparent;
+            border-top: 1px solid rgba(16, 86, 102, 0.08);
+            padding: 0.75rem;
+        }
+
+    /* Footer  */
+    .footer {
+        background: linear-gradient(90deg, #1f4f46, #27685c);
+        color: #f5ede0;
+        margin-top: 40px;
+        padding-top: 1rem;
+        padding-bottom: 1rem;
     }
 
-    .card .card-footer {
-        background-color: transparent;
-        border-top: 1px solid rgba(16, 86, 102, 0.08);
-        padding: 0.75rem;
+    /* Alerts auto-fade */
+    .alert {
+        border: none;
+        border-radius: 0.75rem;
+        margin-bottom: 1rem;
     }
 
-/* Footer  */
-.footer {
-    background: linear-gradient(90deg, #1f4f46, #27685c);
-    color: #f5ede0;
-    margin-top: 40px;
-    padding-top: 1rem;
-    padding-bottom: 1rem;
-}
-
-/* Alerts auto-fade */
-.alert {
-    border: none;
-    border-radius: 0.75rem;
-    margin-bottom: 1rem;
-}
-
-.page-container {
-    margin-top: 2rem;
-    flex: 1 0 auto;
-}
-
-h2 {
-    margin-bottom: 1.5rem;
-    font-weight: 700;
-}
-
-.main-content form {
-    margin-bottom: 2rem;
-}
-
-.main-content .btn:not(.btn-link) {
-    min-height: 2.5rem;
-}
-
-.main-content {
-    margin-bottom: 2.5rem;
-}
-
-@media (max-width: 767.98px) {
-    #registerForm,
-    #account,
-    #external-account {
-        padding: 0.9rem;
+    .page-container {
+        margin-top: 2rem;
+        flex: 1 0 auto;
     }
-}
 
-.alert-info {
-    background-color: #cfe8ef;
+    h2 {
+        margin-bottom: 1.5rem;
+        font-weight: 700;
+    }
+
+    .main-content form {
+        margin-bottom: 2rem;
+    }
+
+    .main-content .btn:not(.btn-link) {
+        min-height: 2.5rem;
+    }
+
+    .main-content {
+        margin-bottom: 2.5rem;
+    }
+
+    @media (max-width: 767.98px) {
+        #registerForm,
+        #account,
+        #external-account {
+            padding: 0.9rem;
+        }
+    }
+
+    .alert-info {
+        background-color: #cfe8ef;
+    }
 }

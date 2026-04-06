@@ -205,7 +205,8 @@ namespace CrochetToysShop.Services.Tests
 
                 // Assert
                 Assert.True(result);
-                var updated = await context.Toys.FindAsync(1);
+                var updated = await context.Toys.FindAsync(1)
+                    ?? throw new InvalidOperationException("Expected toy to exist after edit.");
                 Assert.Equal("Updated Rose", updated.Name);
             }
         }

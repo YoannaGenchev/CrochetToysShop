@@ -14,7 +14,6 @@ namespace CrochetToysShop.Data.Models
 
         public DateTime? CompletedAt { get; set; }
 
-        // Navigation properties
         public virtual Course Course { get; set; } = null!;
     }
 }

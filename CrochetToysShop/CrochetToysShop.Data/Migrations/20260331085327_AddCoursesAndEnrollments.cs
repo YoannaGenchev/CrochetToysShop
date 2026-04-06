@@ -5,10 +5,8 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace CrochetToysShop.Data.Migrations
 {
-    /// <inheritdoc />
     public partial class AddCoursesAndEnrollments : Migration
     {
-        /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.AlterColumn<string>(
@@ -97,7 +95,6 @@ namespace CrochetToysShop.Data.Migrations
                 column: "CourseId");
         }
 
-        /// <inheritdoc />
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropTable(
