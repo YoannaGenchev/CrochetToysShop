@@ -504,5 +504,164 @@ namespace CrochetToysShop.Services.Tests
             var existingToy = await context.Toys.FindAsync(1);
             Assert.NotNull(existingToy);
         }
+
+        [Fact]
+        public async Task SearchAsync_WithSearchTerm_ReturnsMatchingNameOrDescription()
+        {
+            // Arrange
+            using var context = TestDbContextFactory.Create();
+
+            context.Categories.Add(new CategoryBuilder().WithId(1).WithName("Flowers").Build());
+            context.Toys.Add(new ToyBuilder().WithId(1).WithName("Rose Doll").WithDescription("Soft pink petals").WithCategoryId(1).Build());
+            context.Toys.Add(new ToyBuilder().WithId(2).WithName("Tulip").WithDescription("Rose style bouquet").WithCategoryId(1).Build());
+            context.Toys.Add(new ToyBuilder().WithId(3).WithName("Fox").WithDescription("Forest friend").WithCategoryId(1).Build());
+            context.SaveChanges();
+
+            var service = new ToyService(context);
+
+            // Act
+            var result = await service.SearchAsync("rOsE");
+
+            // Assert
+            Assert.Equal(2, result.Toys.Count());
+            Assert.Contains(result.Toys, t => t.Name == "Rose Doll");
+            Assert.Contains(result.Toys, t => t.Name == "Tulip");
+        }
+
+        [Fact]
+        public async Task GetByCategoryNameAsync_WithTrimmedCategoryName_ReturnsOnlyMatchingToys()
+        {
+            // Arrange
+            using var context = TestDbContextFactory.Create();
+
+            context.Categories.Add(new CategoryBuilder().WithId(1).WithName("Flowers").Build());
+            context.Categories.Add(new CategoryBuilder().WithId(2).WithName("Animals").Build());
+            context.Toys.Add(new ToyBuilder().WithId(1).WithName("Rose").WithCategoryId(1).Build());
+            context.Toys.Add(new ToyBuilder().WithId(2).WithName("Tulip").WithCategoryId(1).Build());
+            context.Toys.Add(new ToyBuilder().WithId(3).WithName("Fox").WithCategoryId(2).Build());
+            context.SaveChanges();
+
+            var service = new ToyService(context);
+
+            // Act
+            var result = await service.GetByCategoryNameAsync("  fLoWeRs  ");
+
+            // Assert
+            Assert.Equal(2, result.Toys.Count());
+            Assert.All(result.Toys, t => Assert.Equal("Flowers", t.CategoryName));
+        }
+
+        [Fact]
+        public async Task GetCreateModelAsync_ReturnsCategories()
+        {
+            // Arrange
+            using var context = TestDbContextFactory.Create();
+
+            context.Categories.Add(new CategoryBuilder().WithId(1).WithName("Flowers").Build());
+            context.Categories.Add(new CategoryBuilder().WithId(2).WithName("Animals").Build());
+            context.SaveChanges();
+
+            var service = new ToyService(context);
+
+            // Act
+            var result = await service.GetCreateModelAsync();
+
+            // Assert
+            Assert.NotNull(result);
+            Assert.Equal(2, result.Categories.Count());
+        }
+
+        [Fact]
+        public async Task GetEditModelAsync_WithOwner_ReturnsModel()
+        {
+            // Arrange
+            using var context = TestDbContextFactory.Create();
+
+            context.Categories.Add(new CategoryBuilder().WithId(1).WithName("Flowers").Build());
+            context.Toys.Add(
+                new ToyBuilder()
+                    .WithId(1)
+                    .WithName("Rose")
+                    .WithCategoryId(1)
+                    .WithCreatedByUserId("owner-1")
+                    .Build());
+            context.SaveChanges();
+
+            var service = new ToyService(context);
+
+            // Act
+            var result = await service.GetEditModelAsync(1, "owner-1", isAdmin: false);
+
+            // Assert
+            Assert.NotNull(result);
+            Assert.Equal("Rose", result.Name);
+            Assert.Equal(1, result.CategoryId);
+        }
+
+        [Fact]
+        public async Task GetEditModelAsync_WithUnauthorizedUser_ReturnsNull()
+        {
+            // Arrange
+            using var context = TestDbContextFactory.Create();
+
+            context.Categories.Add(new CategoryBuilder().WithId(1).WithName("Flowers").Build());
+            context.Toys.Add(
+                new ToyBuilder()
+                    .WithId(1)
+                    .WithName("Rose")
+                    .WithCategoryId(1)
+                    .WithCreatedByUserId("owner-1")
+                    .Build());
+            context.SaveChanges();
+
+            var service = new ToyService(context);
+
+            // Act
+            var result = await service.GetEditModelAsync(1, "other-user", isAdmin: false);
+
+            // Assert
+            Assert.Null(result);
+        }
+
+        [Fact]
+        public async Task GetDeleteModelAsync_WithAdmin_ReturnsModel()
+        {
+            // Arrange
+            using var context = TestDbContextFactory.Create();
+
+            context.Categories.Add(new CategoryBuilder().WithId(1).WithName("Flowers").Build());
+            context.Toys.Add(
+                new ToyBuilder()
+                    .WithId(1)
+                    .WithName("Rose")
+                    .WithCategoryId(1)
+                    .WithCreatedByUserId("owner-1")
+                    .Build());
+            context.SaveChanges();
+
+            var service = new ToyService(context);
+
+            // Act
+            var result = await service.GetDeleteModelAsync(1, "any-user", isAdmin: true);
+
+            // Assert
+            Assert.NotNull(result);
+            Assert.Equal(1, result.Id);
+            Assert.Equal("Rose", result.Name);
+        }
+
+        [Fact]
+        public async Task GetDeleteModelAsync_WithMissingToy_ReturnsNull()
+        {
+            // Arrange
+            using var context = TestDbContextFactory.Create();
+            var service = new ToyService(context);
+
+            // Act
+            var result = await service.GetDeleteModelAsync(999, "owner-1", isAdmin: false);
+
+            // Assert
+            Assert.Null(result);
+        }
     }
 }

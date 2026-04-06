@@ -1,0 +1,58 @@
+@model IEnumerable<CrochetToysShop.Web.ViewModels.Courses.EnrolledCourseListItemViewModel>
+
+@{
+    ViewData["Title"] = "My Courses";
+}
+
+<h2 class="mb-4">@ViewData["Title"]</h2>
+
+@if (!Model.Any())
+{
+    <div class="alert alert-info">
+        You have not enrolled in any courses yet. Visit the course catalog to join your first class.
+    </div>
+    <a asp-action="Index" class="btn btn-primary">Browse Courses</a>
+}
+else
+{
+    <div class="table-responsive">
+        <table class="table table-striped align-middle">
+            <thead>
+                <tr>
+                    <th>Course</th>
+                    <th>Difficulty</th>
+                    <th>Duration</th>
+                    <th>Course Fee</th>
+                    <th>Enrolled On</th>
+                    <th>Status</th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var course in Model)
+                {
+                    <tr>
+                        <td>@course.Name</td>
+                        <td>@course.Difficulty</td>
+                        <td>@course.DurationHours h</td>
+                        <td>@course.Price.ToEuro()</td>
+                        <td>@course.EnrolledAt.ToString("dd MMM yyyy")</td>
+                        <td>
+                            @if (course.IsCompleted)
+                            {
+                                <span class="badge bg-success">Completed</span>
+                            }
+                            else
+                            {
+                                <span class="badge bg-secondary">In Progress</span>
+                            }
+                        </td>
+                        <td>
+                            <a asp-action="Details" asp-route-id="@course.CourseId" class="btn btn-outline-primary btn-sm">View</a>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+}

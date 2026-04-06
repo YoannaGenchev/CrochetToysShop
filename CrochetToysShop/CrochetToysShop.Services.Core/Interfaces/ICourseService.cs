@@ -10,6 +10,10 @@ namespace CrochetToysShop.Services.Core.Interfaces
 
         Task<bool> EnrollAsync(int courseId, string userId);
 
+        Task<IEnumerable<EnrolledCourseListItemViewModel>> GetEnrolledCoursesAsync(string userId);
+
+        Task<IEnumerable<AdminCourseEnrollmentListItemViewModel>> GetAllEnrollmentsForAdminAsync();
+
         Task<bool> IsEnrolledAsync(int courseId, string userId);
 
         Task<int> GetEnrolledCountAsync(int courseId);

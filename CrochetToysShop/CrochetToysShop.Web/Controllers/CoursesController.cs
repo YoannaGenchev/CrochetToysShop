@@ -37,6 +37,28 @@ namespace CrochetToysShop.Web.Controllers
             return View(model);
         }
 
+        [HttpGet]
+        [Authorize(Roles = Roles.User)]
+        [Route("Courses/MyCourses")]
+        public async Task<IActionResult> MyCourses()
+        {
+            var userId = User.GetUserId();
+
+            if (string.IsNullOrWhiteSpace(userId))
+            {
+                return Unauthorized();
+            }
+
+            if (User.IsInRole(Roles.Admin))
+            {
+                TempData[TempDataKeys.ErrorMessage] = "Admins cannot access My Courses.";
+                return RedirectToAction(nameof(Index));
+            }
+
+            var model = await courseService.GetEnrolledCoursesAsync(userId);
+            return View(model);
+        }
+
         [HttpPost]
         [Authorize(Roles = Roles.User)]
         [ValidateAntiForgeryToken]
@@ -48,6 +70,12 @@ namespace CrochetToysShop.Web.Controllers
             if (string.IsNullOrEmpty(userId))
             {
                 return Unauthorized();
+            }
+
+            if (User.IsInRole(Roles.Admin))
+            {
+                TempData[TempDataKeys.ErrorMessage] = "Admins cannot enroll in courses.";
+                return RedirectToAction(nameof(Details), new { id });
             }
 
             var success = await courseService.EnrollAsync(id, userId);

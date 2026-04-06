@@ -3,10 +3,12 @@ namespace CrochetToysShop.Services.Tests
     using CrochetToysShop.Common;
     using CrochetToysShop.Common.Constants;
     using CrochetToysShop.Services.Core;
+    using CrochetToysShop.Services.Core.Interfaces;
     using CrochetToysShop.Services.Tests.Infrastructure;
     using CrochetToysShop.Services.Tests.Infrastructure.Builders;
     using CrochetToysShop.Web.ViewModels.Orders;
     using Microsoft.EntityFrameworkCore;
+    using Moq;
     using Xunit;
 
     public class OrderServiceTests
@@ -399,6 +401,92 @@ namespace CrochetToysShop.Services.Tests
 
             // Assert
             Assert.False(ok);
+        }
+
+        [Fact]
+        public async Task CreateOrderAsync_WithAvailableToy_CallsNotificationService()
+        {
+            // Arrange
+            using var context = TestDbContextFactory.Create();
+
+            context.Categories.Add(new CategoryBuilder().WithId(1).WithName("Flowers").Build());
+            context.Toys.Add(new ToyBuilder().WithId(1).WithName("Rose").WithCategoryId(1).WithIsAvailable(true).Build());
+            context.SaveChanges();
+
+            var notificationServiceMock = new Mock<INotificationService>();
+            var service = new OrderService(context, notificationServiceMock.Object);
+            var model = new OrderCreateViewModel
+            {
+                ToyId = 1,
+                CustomerName = "John",
+                PhoneNumber = "123456",
+                Address = "123 Main St"
+            };
+
+            // Act
+            var (ok, _, _) = await service.CreateOrderAsync(model);
+
+            // Assert
+            Assert.True(ok);
+            notificationServiceMock.Verify(
+                n => n.NotifyOrderCreatedAsync(It.IsAny<int>(), 1, "John"),
+                Times.Once);
+        }
+
+        [Fact]
+        public async Task CreateOrderAsync_WithMissingToy_DoesNotCallNotificationService()
+        {
+            // Arrange
+            using var context = TestDbContextFactory.Create();
+
+            var notificationServiceMock = new Mock<INotificationService>();
+            var service = new OrderService(context, notificationServiceMock.Object);
+            var model = new OrderCreateViewModel
+            {
+                ToyId = 999,
+                CustomerName = "John",
+                PhoneNumber = "123456",
+                Address = "123 Main St"
+            };
+
+            // Act
+            var (ok, _, _) = await service.CreateOrderAsync(model);
+
+            // Assert
+            Assert.False(ok);
+            notificationServiceMock.Verify(
+                n => n.NotifyOrderCreatedAsync(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<string>()),
+                Times.Never);
+        }
+
+        [Fact]
+        public async Task CreateOrderAsync_WithUnavailableToy_DoesNotCallNotificationService()
+        {
+            // Arrange
+            using var context = TestDbContextFactory.Create();
+
+            context.Categories.Add(new CategoryBuilder().WithId(1).WithName("Flowers").Build());
+            context.Toys.Add(new ToyBuilder().WithId(1).WithName("Rose").WithCategoryId(1).WithIsAvailable(false).Build());
+            context.SaveChanges();
+
+            var notificationServiceMock = new Mock<INotificationService>();
+            var service = new OrderService(context, notificationServiceMock.Object);
+            var model = new OrderCreateViewModel
+            {
+                ToyId = 1,
+                CustomerName = "John",
+                PhoneNumber = "123456",
+                Address = "123 Main St"
+            };
+
+            // Act
+            var (ok, _, _) = await service.CreateOrderAsync(model);
+
+            // Assert
+            Assert.False(ok);
+            notificationServiceMock.Verify(
+                n => n.NotifyOrderCreatedAsync(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<string>()),
+                Times.Never);
         }
     }
 }

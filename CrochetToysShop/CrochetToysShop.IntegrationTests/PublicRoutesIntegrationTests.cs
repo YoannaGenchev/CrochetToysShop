@@ -1,13 +1,13 @@
-using CrochetToysShop.Web.Controllers;
 using Microsoft.AspNetCore.Mvc.Testing;
+using System.Net;
 
 namespace CrochetToysShop.IntegrationTests;
 
-public class PublicRoutesIntegrationTests : IClassFixture<WebApplicationFactory<HomeController>>
+public class PublicRoutesIntegrationTests : IClassFixture<IsolatedSqlServerWebApplicationFactory>
 {
-    private readonly WebApplicationFactory<HomeController> factory;
+    private readonly IsolatedSqlServerWebApplicationFactory factory;
 
-    public PublicRoutesIntegrationTests(WebApplicationFactory<HomeController> factory)
+    public PublicRoutesIntegrationTests(IsolatedSqlServerWebApplicationFactory factory)
     {
         this.factory = factory;
     }
@@ -36,5 +36,95 @@ public class PublicRoutesIntegrationTests : IClassFixture<WebApplicationFactory<
 
         // Assert
         response.EnsureSuccessStatusCode();
+    }
+
+    [Fact]
+    public async Task GetOrdersRoute_AsGuest_RedirectsToLogin()
+    {
+        // Arrange
+        using var client = factory.CreateClient(new WebApplicationFactoryClientOptions
+        {
+            AllowAutoRedirect = false
+        });
+
+        // Act
+        var response = await client.GetAsync("/Orders");
+
+        // Assert
+        Assert.Equal(HttpStatusCode.Redirect, response.StatusCode);
+        Assert.NotNull(response.Headers.Location);
+        Assert.Contains("/Identity/Account/Login", response.Headers.Location!.ToString());
+    }
+
+    [Fact]
+    public async Task GetToyCreateRoute_AsGuest_RedirectsToLogin()
+    {
+        // Arrange
+        using var client = factory.CreateClient(new WebApplicationFactoryClientOptions
+        {
+            AllowAutoRedirect = false
+        });
+
+        // Act
+        var response = await client.GetAsync("/Toys/Create");
+
+        // Assert
+        Assert.Equal(HttpStatusCode.Redirect, response.StatusCode);
+        Assert.NotNull(response.Headers.Location);
+        Assert.Contains("/Identity/Account/Login", response.Headers.Location!.ToString());
+    }
+
+    [Fact]
+    public async Task PostCourseEnroll_AsGuest_RedirectsToLogin()
+    {
+        // Arrange
+        using var client = factory.CreateClient(new WebApplicationFactoryClientOptions
+        {
+            AllowAutoRedirect = false
+        });
+
+        // Act
+        var response = await client.PostAsync("/Courses/Enroll/1", content: null);
+
+        // Assert
+        Assert.Equal(HttpStatusCode.Redirect, response.StatusCode);
+        Assert.NotNull(response.Headers.Location);
+        Assert.Contains("/Identity/Account/Login", response.Headers.Location!.ToString());
+    }
+
+    [Fact]
+    public async Task PostOrderMarkCompleted_AsGuest_RedirectsToLogin()
+    {
+        // Arrange
+        using var client = factory.CreateClient(new WebApplicationFactoryClientOptions
+        {
+            AllowAutoRedirect = false
+        });
+
+        // Act
+        var response = await client.PostAsync("/Orders/MarkCompleted/1", content: null);
+
+        // Assert
+        Assert.Equal(HttpStatusCode.Redirect, response.StatusCode);
+        Assert.NotNull(response.Headers.Location);
+        Assert.Contains("/Identity/Account/Login", response.Headers.Location!.ToString());
+    }
+
+    [Fact]
+    public async Task GetMyCourses_AsGuest_RedirectsToLogin()
+    {
+        // Arrange
+        using var client = factory.CreateClient(new WebApplicationFactoryClientOptions
+        {
+            AllowAutoRedirect = false
+        });
+
+        // Act
+        var response = await client.GetAsync("/Courses/MyCourses");
+
+        // Assert
+        Assert.Equal(HttpStatusCode.Redirect, response.StatusCode);
+        Assert.NotNull(response.Headers.Location);
+        Assert.Contains("/Identity/Account/Login", response.Headers.Location!.ToString());
     }
 }

@@ -106,7 +106,7 @@ namespace CrochetToysShop.Services.Core
         {
             // Check if course exists and has space
             var course = await db.Courses
-                .FirstOrDefaultAsync(c => c.Id == courseId);
+                .FirstOrDefaultAsync(c => c.Id == courseId && c.IsActive);
 
             if (course == null)
             {
@@ -140,6 +140,45 @@ namespace CrochetToysShop.Services.Core
             await db.SaveChangesAsync();
 
             return true;
+        }
+
+        public async Task<IEnumerable<EnrolledCourseListItemViewModel>> GetEnrolledCoursesAsync(string userId)
+        {
+            return await db.Enrollments
+                .AsNoTracking()
+                .Where(e => e.UserId == userId)
+                .Include(e => e.Course)
+                .OrderByDescending(e => e.EnrolledAt)
+                .Select(e => new EnrolledCourseListItemViewModel
+                {
+                    CourseId = e.CourseId,
+                    Name = e.Course.Name,
+                    Difficulty = e.Course.Difficulty,
+                    DurationHours = e.Course.DurationHours,
+                    Price = e.Course.Price,
+                    EnrolledAt = e.EnrolledAt,
+                    IsCompleted = e.IsCompleted,
+                })
+                .ToListAsync();
+        }
+
+        public async Task<IEnumerable<AdminCourseEnrollmentListItemViewModel>> GetAllEnrollmentsForAdminAsync()
+        {
+            return await (from enrollment in db.Enrollments.AsNoTracking()
+                          join course in db.Courses.AsNoTracking() on enrollment.CourseId equals course.Id
+                          join user in db.Users.AsNoTracking() on enrollment.UserId equals user.Id into userJoin
+                          from user in userJoin.DefaultIfEmpty()
+                          orderby enrollment.EnrolledAt descending
+                          select new AdminCourseEnrollmentListItemViewModel
+                          {
+                              CourseName = course.Name,
+                              EnrolledUser = user != null && !string.IsNullOrWhiteSpace(user.Email)
+                                  ? user.Email
+                                  : enrollment.UserId,
+                              EnrolledAt = enrollment.EnrolledAt,
+                              IsCompleted = enrollment.IsCompleted,
+                          })
+                .ToListAsync();
         }
 
         public async Task<bool> IsEnrolledAsync(int courseId, string userId)

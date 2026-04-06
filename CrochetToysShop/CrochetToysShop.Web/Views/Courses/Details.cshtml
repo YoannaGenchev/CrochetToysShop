@@ -51,31 +51,36 @@
         <p class="text-muted">@Model.Description</p>
         <p class="small text-muted mb-0">Enrollment is available for authenticated users in the <strong>User</strong> role. Course status is based on remaining spots.</p>
 
-        <div class="mt-4 d-flex flex-wrap gap-2">
-            <a asp-action="Index" class="btn btn-secondary">Back to Courses</a>
+        <div class="course-actions">
+            <a asp-action="Index" class="btn btn-secondary course-action-btn">Back to Courses</a>
+
             @if (User.Identity?.IsAuthenticated == true)
             {
-                @if (User.IsInRole(Roles.User))
+                @if (User.IsInRole(Roles.Admin))
+                {
+                    <span class="small text-muted">Admin view - enrollment disabled.</span>
+                }
+                else if (User.IsInRole(Roles.User))
                 {
                     @if (Model.IsUserEnrolled)
                     {
-                        <button type="button" class="btn btn-success" disabled>Already Enrolled</button>
+                        <button type="button" class="btn btn-success course-action-btn" disabled>Already Enrolled</button>
                     }
                     else if (Model.CanEnroll)
                     {
-                        <form asp-action="Enroll" asp-route-id="@Model.Id" method="post" style="display: inline;">
-                            <button type="submit" class="btn btn-primary">Enroll in This Course</button>
+                        <form asp-action="Enroll" asp-route-id="@Model.Id" method="post" class="m-0">
+                            <button type="submit" class="btn btn-primary course-action-btn">Enroll in This Course</button>
                         </form>
                     }
                     else
                     {
-                        <button type="button" class="btn btn-danger" disabled>Course Full</button>
+                        <button type="button" class="btn btn-danger course-action-btn" disabled>Course Full</button>
                     }
                 }
             }
             else
             {
-                <a asp-area="Identity" asp-page="/Account/Login" class="btn btn-warning">Log In to Enroll</a>
+                <a asp-area="Identity" asp-page="/Account/Login" class="btn btn-warning course-action-btn">Log In to Enroll</a>
             }
         </div>
     </div>
