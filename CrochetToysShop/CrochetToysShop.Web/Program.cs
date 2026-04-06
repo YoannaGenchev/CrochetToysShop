@@ -20,13 +20,14 @@ builder.Services.AddDatabaseDeveloperPageExceptionFilter();
 
 builder.Services.AddDefaultIdentity<IdentityUser>(options =>
 {
+    // Use baseline-strong credentials for final project security while keeping UX simple.
     options.SignIn.RequireConfirmedAccount = false;
 
-    options.Password.RequireDigit = false;
+    options.Password.RequireDigit = true;
     options.Password.RequireLowercase = false;
     options.Password.RequireUppercase = false;
     options.Password.RequireNonAlphanumeric = false;
-    options.Password.RequiredLength = 3;
+    options.Password.RequiredLength = 6;
 })
 .AddRoles<IdentityRole>()
 .AddEntityFrameworkStores<ApplicationDbContext>();
@@ -54,7 +55,8 @@ builder.Services.AddHttpLogging(options =>
 // Build app
 var app = builder.Build();
 
-// Database initialization
+// Database initialization applies migrations and seed data at startup.
+// Admin seed password is read from configuration/environment, not hardcoded in production config.
 app.ApplyMigrationsAndSeed();
 
 // Environment configuration
@@ -81,6 +83,11 @@ app.UseAuthentication();
 app.UseAuthorization();
 
 // Routing
+app.MapAreaControllerRoute(
+    name: "admin",
+    areaName: "Admin",
+    pattern: "Admin/{controller=Home}/{action=Index}/{id?}");
+
 app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Home}/{action=Index}/{id?}");

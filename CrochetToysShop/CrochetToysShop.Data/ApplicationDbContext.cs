@@ -22,5 +22,14 @@ namespace CrochetToysShop.Data
         public DbSet<Course> Courses { get; set; } = null!;
 
         public DbSet<Enrollment> Enrollments { get; set; } = null!;
+
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+            base.OnModelCreating(modelBuilder);
+
+            modelBuilder.Entity<Enrollment>()
+                .HasIndex(e => new { e.CourseId, e.UserId })
+                .IsUnique();
+        }
     }
 }
