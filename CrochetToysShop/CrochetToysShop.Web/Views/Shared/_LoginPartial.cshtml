@@ -3,24 +3,38 @@
 @inject UserManager<IdentityUser> UserManager
 
 <ul class="navbar-nav navbar-auth-links">
-@if (SignInManager.IsSignedIn(User))
-{
-    <li class="nav-item">
-        <a class="nav-link text-dark navbar-user-link" asp-area="Identity" asp-page="/Account/Manage/Index" title="Manage">@User.Identity?.Name</a>
-    </li>
-    <li class="nav-item">
-        <form method="post" class="form-inline navbar-logout-form" asp-area="Identity" asp-page="/Account/Logout" asp-route-returnUrl="@Url.Action("Index", "Home", new { area = "" })">
-            <button type="submit" class="nav-link btn btn-link text-dark navbar-logout-btn">Logout</button>
-        </form>
-    </li>
-}
-else
-{
-    <li class="nav-item">
-        <a class="nav-link text-dark navbar-auth-link navbar-auth-link-register" asp-area="Identity" asp-page="/Account/Register">Register</a>
-    </li>
-    <li class="nav-item">
-        <a class="nav-link text-dark navbar-auth-link" asp-area="Identity" asp-page="/Account/Login">Login</a>
-    </li>
-}
+    @if (SignInManager.IsSignedIn(User))
+    {
+        <li class="nav-item">
+            <a class="navbar-user-link" asp-area="Identity" asp-page="/Account/Manage/Index" title="Manage">
+                @User.Identity?.Name
+            </a>
+        </li>
+        <li class="nav-item">
+            <form method="post"
+                  class="navbar-logout-form"
+                  asp-area="Identity"
+                  asp-page="/Account/Logout"
+                  asp-route-returnUrl="@Url.Action("Index", "Home", new { area = "" })">
+                <button type="submit" class="navbar-logout-btn">Logout</button>
+            </form>
+        </li>
+    }
+    else
+    {
+        <li class="nav-item">
+            <a class="navbar-auth-link-register"
+               asp-area="Identity"
+               asp-page="/Account/Register">
+                Register
+            </a>
+        </li>
+        <li class="nav-item">
+            <a class="navbar-auth-link"
+               asp-area="Identity"
+               asp-page="/Account/Login">
+                Login
+            </a>
+        </li>
+    }
 </ul>

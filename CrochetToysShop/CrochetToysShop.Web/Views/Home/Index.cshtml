@@ -4,6 +4,7 @@
 
 <section class="hero-section">
     <div class="hero-content">
+        <img src="~/images/logo/logo.jpg" asp-append-version="true" alt="Crochet Toy Shop logo" class="hero-logo" />
         <h1>Handmade Crochet Toys for Cozy Moments</h1>
         <p class="lead">Discover soft, lovingly crafted toys made to bring comfort, imagination, and joy to every little adventure.</p>
 
@@ -12,7 +13,7 @@
             <a asp-controller="Courses" asp-action="Index" class="btn btn-hero">Explore Courses</a>
             @if (User?.Identity?.IsAuthenticated != true)
             {
-                <a asp-area="Identity" asp-page="/Account/Register" class="btn btn-hero btn-hero-secondary">Register</a>
+                <a asp-area="Identity" asp-page="/Account/Register" class="btn btn-hero">Register</a>
             }
         </div>
     </div>

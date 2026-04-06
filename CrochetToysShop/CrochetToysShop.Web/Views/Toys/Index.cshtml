@@ -16,7 +16,7 @@
 
 <div class="row g-2 align-items-stretch toys-toolbar">
     <div class="col-12 col-lg-3">
-        <a asp-action="Index" asp-route-categoryId="@easterCategoryId" class="btn btn-warning w-100 toys-toolbar-btn">🌸 Easter Collection</a>
+        <a asp-action="Index" asp-route-categoryId="@easterCategoryId" class="btn btn-warning w-100 toys-toolbar-btn toys-toolbar-btn-pink">🌸 Easter Collection</a>
     </div>
     <div class="col-12 col-lg-9">
         <form method="get" asp-action="Search" class="toys-search-form">
@@ -34,7 +34,7 @@
                     </select>
                 </div>
                 <div class="col-12 col-md-2">
-                    <button type="submit" class="btn btn-primary w-100 toys-toolbar-btn">🔍</button>
+                    <button type="submit" class="btn btn-primary w-100 toys-toolbar-btn toys-toolbar-btn-pink">🔍</button>
                 </div>
             </div>
         </form>
@@ -58,17 +58,17 @@ else
                     }
                     else
                     {
-                        <img class="card-img-top toy-card-img" src="/images/toys/no-image.svg" asp-append-version="true" alt="@toy.Name" loading="lazy" decoding="async" />
+                        <img class="card-img-top toy-card-img toy-card-img--fallback" src="/images/toys/no-image.svg" asp-append-version="true" alt="@toy.Name" loading="lazy" decoding="async" />
                     }
 
                     <div class="card-body toy-card-body">
-                        <h5 class="card-title">@toy.Name</h5>
-                        <p class="card-text"><span class="badge bg-secondary">@toy.CategoryName</span></p>
-                        <span class="badge @(toy.IsAvailable ? "bg-success" : "bg-danger")">@(toy.IsAvailable ? ApplicationConstants.UILabels.Available : ApplicationConstants.UILabels.OutOfStock)</span>
+                        <h5 class="card-title toy-card-title">@toy.Name</h5>
+                        <p class="card-text"><span class="badge toy-card-category">@toy.CategoryName</span></p>
+                        <span class="badge toy-card-status @(toy.IsAvailable ? "toy-card-status--available" : "toy-card-status--unavailable")">@(toy.IsAvailable ? ApplicationConstants.UILabels.Available : ApplicationConstants.UILabels.OutOfStock)</span>
                         <p class="card-text fw-bold toy-card-price">@toy.Price.ToEuro()</p>
                     </div>
                     <div class="card-footer bg-white border-0 toy-card-footer">
-                        <a asp-controller="Toys" asp-action="Details" asp-route-id="@toy.Id" class="btn btn-outline-primary w-100 toy-card-btn">Details</a>
+                        <a asp-controller="Toys" asp-action="Details" asp-route-id="@toy.Id" class="btn w-100 toy-card-btn toy-card-details-btn">Details</a>
 
                         @if (User.IsInRole(Roles.Admin))
                         {

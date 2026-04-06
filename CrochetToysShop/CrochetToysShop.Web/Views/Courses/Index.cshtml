@@ -30,36 +30,36 @@
 }
 else
 {
-    <div class="row">
+    <div class="row g-4 courses-grid">
         @foreach (var course in Model.Courses)
         {
-            <div class="col-md-4 mb-4">
-                <div class="card h-100">
+            <div class="col-md-4 d-flex">
+                <div class="card h-100 course-card">
                     @if (!string.IsNullOrWhiteSpace(course.ImageUrl))
                     {
-                        <img class="card-img-top toy-card-img" src="@course.ImageUrl" asp-append-version="true" alt="@course.Name" loading="lazy" decoding="async" />
+                        <img class="card-img-top toy-card-img course-card-img" src="@course.ImageUrl" asp-append-version="true" alt="@course.Name" loading="lazy" decoding="async" />
                     }
                     else
                     {
-                        <img class="card-img-top toy-card-img" src="/images/toys/no-image.svg" asp-append-version="true" alt="@course.Name" loading="lazy" decoding="async" />
+                        <img class="card-img-top toy-card-img course-card-img course-card-img--fallback" src="/images/toys/no-image.svg" asp-append-version="true" alt="@course.Name" loading="lazy" decoding="async" />
                     }
 
-                    <div class="card-body">
-                        <h5 class="card-title">@course.Name</h5>
-                        <p class="card-text text-muted">
+                    <div class="card-body course-card-body">
+                        <h5 class="card-title course-card-title">@course.Name</h5>
+                        <p class="card-text course-card-meta">
                             <small><strong>Duration:</strong> @course.DurationHours hours • <strong>Level:</strong> @course.Difficulty</small>
                         </p>
-                        <p class="card-text text-muted">Includes full course description, requirements, and enrollment action on the details page.</p>
-                        <p class="card-text fw-bold">Course fee: @course.Price.ToEuro()</p>
-                        <p class="card-text">
-                            <small class="text-muted"><strong>Enrollment:</strong> @course.EnrolledCount / @course.MaxStudents spots taken</small>
+                        <p class="card-text course-card-description">Includes full course description, requirements, and enrollment action on the details page.</p>
+                        <p class="card-text fw-bold course-card-fee">Course fee: @course.Price.ToEuro()</p>
+                        <p class="card-text course-card-enrollment">
+                            <small><strong>Enrollment:</strong> @course.EnrolledCount / @course.MaxStudents spots taken</small>
                         </p>
                     </div>
-                    <div class="card-footer bg-white border-0">
-                        <a asp-action="Details" asp-route-id="@course.Id" class="btn btn-primary w-100">View & Enroll</a>
+                    <div class="card-footer bg-white border-0 course-card-footer">
+                        <a asp-action="Details" asp-route-id="@course.Id" class="btn w-100 course-card-btn">View & Enroll</a>
                     </div>
                 </div>
-      </div>
+       </div>
 }
 
 <!-- Pagination Controls -->
